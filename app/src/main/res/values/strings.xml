@@ -25,6 +25,7 @@
     <string name="text_song_title">Song title</string>
     <string name="text_song_artist">Song artist</string>
     <string name="title_recommended">Recommended songs\n</string>
-    <string name="title_detail_album">Detail_album</string>
+    <string name="title_detail_album">Detail album</string>
     <string name="title_song_list">Song list</string>
+    <string name="text_playlist_num_of_song">Number of songs: %d</string>
 </resources>

@@ -8,13 +8,20 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import com.example.musicapplication.R
 import com.example.musicapplication.data.model.album.Album
 import com.example.musicapplication.databinding.FragmentAlbumHotBinding
+import com.example.musicapplication.ui.home.HomeViewModel
+import com.example.musicapplication.ui.home.album.detail.DetailAlbumFragment
+import com.example.musicapplication.ui.home.album.detail.DetailAlbumViewModel
 
 class AlbumHotFragment : Fragment() {
     private lateinit var binding: FragmentAlbumHotBinding
     private lateinit var adapter: AlbumAdapter
-    private val albumViewModel: AlbumHotViewModel by viewModels()
+    private val albumViewModel: AlbumHotViewModel by activityViewModels()
+    private val detailAlbumViewModel: DetailAlbumViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,7 +41,10 @@ class AlbumHotFragment : Fragment() {
         binding.progressBarAlbum.visibility = VISIBLE
         adapter = AlbumAdapter(object : AlbumAdapter.OnAlbumClickListener {
             override fun onAlbumClick(album: Album) {
-                // todo
+                detailAlbumViewModel.setAlbum(album)
+                val songs = homeViewModel.songs.value
+                detailAlbumViewModel.extractSongs(album, songs)
+                navigateToDetailAlbum()
             }
         })
         binding.rvAlbumHot.adapter = adapter
@@ -47,5 +57,13 @@ class AlbumHotFragment : Fragment() {
             }.subList(0, 10))
             binding.progressBarAlbum.visibility = GONE
         }
+    }
+
+    private fun navigateToDetailAlbum() {
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, DetailAlbumFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
     }
 }

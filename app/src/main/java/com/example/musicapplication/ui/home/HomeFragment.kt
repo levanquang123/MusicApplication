@@ -6,37 +6,38 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.musicapplication.databinding.FragmentHomeBinding
+import com.example.musicapplication.ui.home.album.AlbumHotViewModel
+import com.example.musicapplication.ui.home.recommended.RecommendedViewModel
 
 class HomeFragment : Fragment() {
-
-    private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var _binding: FragmentHomeBinding
+    private val homeView: HomeViewModel by activityViewModels()
+    private val albumViewModel: AlbumHotViewModel by activityViewModels()
+    private val songViewModel: RecommendedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        val homeViewModel =
-//            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-//            val textView: TextView = binding.textTitleHome
-//        homeViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
-        return root
+        return _binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupObserver()
+    }
+
+    private fun setupObserver() {
+        homeView.albums.observe(viewLifecycleOwner) {
+            albumViewModel.setAlbums(it)
+        }
+        homeView.songs.observe(viewLifecycleOwner) {
+            songViewModel.setSongs(it)
+        }
     }
 }

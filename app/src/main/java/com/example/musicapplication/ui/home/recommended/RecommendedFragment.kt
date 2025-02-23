@@ -5,6 +5,7 @@ import Song
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import com.example.musicapplication.databinding.FragmentRecommendedBinding
 
 class RecommendedFragment : Fragment() {
     private lateinit var binding: FragmentRecommendedBinding
-    private val recommendedViewModel: RecommendedViewModel by viewModels()
+    private val recommendedViewModel: RecommendedViewModel by activityViewModels()
     private lateinit var adapter: SongAdapter
 
     override fun onCreateView(
@@ -33,12 +34,12 @@ class RecommendedFragment : Fragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    TODO("Not yet implemented")
+                    // todo
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    TODO("Not yet implemented")
+                    // todo
                 }
             }
         )

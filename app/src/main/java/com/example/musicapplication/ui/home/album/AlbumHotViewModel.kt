@@ -12,26 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlbumHotViewModel : ViewModel() {
-    private val albumRepository = AlbumRepositoryImpl()
     private val _albums = MutableLiveData<List<Album>>()
     val albums: LiveData<List<Album>>
         get() = _albums
 
-    init {
-        loadAlbums()
-    }
-
-    private fun loadAlbums() {
-        viewModelScope.launch(Dispatchers.IO) {
-            albumRepository.loadAlbums(object : ResultCallback<Result<List<Album>>> {
-                override fun onResult(result: Result<List<Album>>) {
-                    if (result is Result.Success) {
-                        _albums.postValue(result.data)
-                    } else {
-                        _albums.postValue(emptyList())
-                    }
-                }
-            })
-        }
+    fun setAlbums(albums: List<Album>) {
+        _albums.postValue(albums)
     }
 }

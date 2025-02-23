@@ -19,4 +19,10 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_albums_hot">Albums hot</string>
+    <string name="image_button_desc">btn_more_album_hot</string>
+    <string name="image_desc">Song avatar</string>
+    <string name="text_song_title">Song title</string>
+    <string name="text_song_artist">Song artist</string>
+    <string name="title_recommended">Recommended songs\n</string>
 </resources>

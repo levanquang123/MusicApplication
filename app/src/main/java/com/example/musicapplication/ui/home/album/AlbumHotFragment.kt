@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.home.album
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +14,9 @@ import com.example.musicapplication.databinding.FragmentAlbumHotBinding
 import com.example.musicapplication.ui.home.HomeViewModel
 import com.example.musicapplication.ui.home.album.detail.DetailAlbumFragment
 import com.example.musicapplication.ui.home.album.detail.DetailAlbumViewModel
+import com.example.musicapplication.ui.home.album.more.MoreAlbumFragment
+import com.example.musicapplication.ui.home.album.more.MoreAlbumViewModel
+
 
 class AlbumHotFragment : Fragment() {
     private lateinit var binding: FragmentAlbumHotBinding
@@ -22,7 +24,7 @@ class AlbumHotFragment : Fragment() {
     private val albumViewModel: AlbumHotViewModel by activityViewModels()
     private val detailAlbumViewModel: DetailAlbumViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
+    private val moreAlbumViewModel: MoreAlbumViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +50,12 @@ class AlbumHotFragment : Fragment() {
             }
         })
         binding.rvAlbumHot.adapter = adapter
+        binding.textTitleAlbumHot.setOnClickListener {
+            navigateToMoreAlbum()
+        }
+        binding.btnMoreAlbumHot.setOnClickListener {
+            navigateToMoreAlbum()
+        }
     }
 
     private fun observeData() {
@@ -63,6 +71,17 @@ class AlbumHotFragment : Fragment() {
         requireActivity().supportFragmentManager
             .beginTransaction()
             .replace(R.id.nav_host_fragment_activity_main, DetailAlbumFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
+    }
+    private fun navigateToMoreAlbum() {
+        val albums = homeViewModel.albums.value
+        albums?.let { albumList ->
+            moreAlbumViewModel.setAlbums(albumList.sortedBy { -it.size })
+        }
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, MoreAlbumFragment::class.java, null)
             .addToBackStack(null)
             .commit()
     }

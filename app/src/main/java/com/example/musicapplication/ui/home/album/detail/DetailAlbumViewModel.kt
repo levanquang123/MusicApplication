@@ -19,15 +19,15 @@ class DetailAlbumViewModel : ViewModel() {
     }
 
     fun extractSongs(album: Album, songs: List<Song>?) {
-        songs?.let {
-            val songsList = mutableListOf<Song>()
-            for (songId in album.songs) {
+        songs?.let{
+            val songList = mutableListOf<Song>()
+            for ( songId in album.songs) {
                 val songIndex = songs.indexOfFirst { it.id == songId }
                 if (songIndex != -1) {
-                    songsList.add(songs[songIndex])
+                    songList.add(songs[songIndex])
                 }
             }
-            _songs.value = songsList
+            _songs.value = songList
         }
     }
 }

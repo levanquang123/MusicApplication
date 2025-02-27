@@ -15,6 +15,7 @@ class HomeFragment : Fragment() {
     private val homeView: HomeViewModel by activityViewModels()
     private val albumViewModel: AlbumHotViewModel by activityViewModels()
     private val songViewModel: RecommendedViewModel by activityViewModels()
+    private var isObserved = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,7 +28,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupObserver()
+        if(!isObserved) {
+            setupObserver()
+            isObserved = true
+        }
     }
 
     private fun setupObserver() {

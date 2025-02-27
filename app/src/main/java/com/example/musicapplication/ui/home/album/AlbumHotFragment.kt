@@ -50,12 +50,8 @@ class AlbumHotFragment : Fragment() {
             }
         })
         binding.rvAlbumHot.adapter = adapter
-        binding.textTitleAlbumHot.setOnClickListener {
-            navigateToMoreAlbum()
-        }
-        binding.btnMoreAlbumHot.setOnClickListener {
-            navigateToMoreAlbum()
-        }
+        binding.textTitleAlbumHot.setOnClickListener { navigateToMoreAlbum() }
+        binding.btnMoreAlbumHot.setOnClickListener { navigateToMoreAlbum() }
     }
 
     private fun observeData() {
@@ -74,6 +70,7 @@ class AlbumHotFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+
     private fun navigateToMoreAlbum() {
         val albums = homeViewModel.albums.value
         albums?.let { albumList ->

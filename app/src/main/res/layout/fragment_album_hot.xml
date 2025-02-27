@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_8"
+        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/image_button_desc"
         android:src="@drawable/ic_navigate_next"

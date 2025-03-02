@@ -28,4 +28,25 @@
     <string name="title_detail_album">Detail album</string>
     <string name="title_song_list">Song list</string>
     <string name="text_playlist_num_of_song">Number of songs: %d</string>
+    <string name="item_download">Download</string>
+    <string name="item_add_to_favourites">Add to favorite</string>
+    <string name="item_add_to_playlist">Add to playlist</string>
+    <string name="item_add_to_queue">Add to play next</string>
+    <string name="item_view_album">View album</string>
+    <string name="item_view_artist">View artist</string>
+    <string name="item_block">Block</string>
+    <string name="item_report_error">Report error</string>
+    <string name="item_view_song_information">View song information</string>
+    <string name="text_song_detail_album">Album: %s</string>
+    <string name="text_song_detail_duration">Duration: %d</string>
+    <string name="text_song_detail_counter">Number of plays: %d</string>
+    <string name="text_song_detail_replay_counter">Number of replay: %d</string>
+    <string name="text_song_detail_favorite_status">Is your favorite song: %s</string>
+    <string name="text_song_detail_genre">Genre: %s</string>
+    <string name="text_song_detail_year">Publish year: %s</string>
+    <string name="text_song_detail_title">Title: %s</string>
+    <string name="text_song_detail_artist">Artist: %s</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="not_available">N/a</string>
 </resources>

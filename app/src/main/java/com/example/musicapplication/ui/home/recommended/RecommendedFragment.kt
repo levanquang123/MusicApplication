@@ -2,17 +2,17 @@ package com.example.musicapplication.ui.home.recommended
 
 import Song
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.R
 import com.example.musicapplication.databinding.FragmentRecommendedBinding
+import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedViewModel
 
-class RecommendedFragment : Fragment() {
+class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecommendedBinding
     private val recommendedViewModel: RecommendedViewModel by activityViewModels()
     private lateinit var adapter: SongAdapter
@@ -41,7 +41,7 @@ class RecommendedFragment : Fragment() {
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    // todo
+                    showOptionMenu(song)
                 }
             }
         )

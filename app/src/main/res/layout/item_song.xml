@@ -66,7 +66,7 @@
         android:layout_width="@dimen/button_width_48"
         android:layout_height="@dimen/button_height_48"
         android:layout_marginEnd="@dimen/margin_8"
-        android:background="@android:color/transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/image_button_desc"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"

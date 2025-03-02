@@ -58,7 +58,7 @@ class DetailAlbumFragment : Fragment() {
             binding.includeAlbumDetail.textPlaylistDetailNumOfSong.text = text
             Glide.with(binding.root)
                 .load(album.artwork)
-                .error(R.drawable.ic_album)
+                .error(R.drawable.ic_album_black)
                 .into(binding.includeAlbumDetail.imagePlaylistArtwork)
         }
         detailAlbumViewModel.songs.observe(viewLifecycleOwner) { songs ->

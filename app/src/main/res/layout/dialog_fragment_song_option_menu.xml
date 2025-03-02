@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
+        android:id="@+id/include_song_bottom_sheet"
         layout="@layout/item_song_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,8 +23,10 @@
         android:background="@color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_option_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginStart="@dimen/margin_8"
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"

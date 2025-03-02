@@ -50,7 +50,7 @@ class SongAdapter(
             binding.textItemSongArtist.text = song.artist
             Glide.with(binding.root)
                 .load(song.image)
-                .error(R.drawable.ic_album)
+                .error(R.drawable.ic_album_black)
                 .into(binding.imageItemSongArtwork)
             binding.root.setOnClickListener {
                 onSongClickListener.onClick(song, index)

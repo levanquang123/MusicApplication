@@ -21,7 +21,7 @@ class AlbumAdapter(
             binding.textAlbumItemName.text = album.name
             Glide.with(binding.root.context)
                 .load(album.artwork)
-                .error(R.drawable.ic_album)
+                .error(R.drawable.ic_album_black)
                 .into(binding.imageAlbumItem)
             binding.root.setOnClickListener {
                 listener.onAlbumClick(album)

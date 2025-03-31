@@ -11,13 +11,14 @@ import com.example.musicapplication.databinding.FragmentRecommendedBinding
 import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedViewModel
+import com.example.musicapplication.ui.playing.MiniPlayerViewModel
 
 class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecommendedBinding
     private val recommendedViewModel: RecommendedViewModel by activityViewModels()
     private lateinit var adapter: SongAdapter
     private val moreRecommendedViewModel: MoreRecommendedViewModel by activityViewModels()
-
+    private val miniPlayerViewModel: MiniPlayerViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +37,7 @@ class RecommendedFragment : PlayerBaseFragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    // todo
+                    miniPlayerViewModel.setSong(song)
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {

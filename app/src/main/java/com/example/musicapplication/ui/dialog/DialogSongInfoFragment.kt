@@ -1,9 +1,7 @@
 package com.example.musicapplication.ui.dialog
 
 import Song
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,7 +51,7 @@ class DialogSongInfoFragment : BottomSheetDialogFragment() {
 
         Glide.with(this)
             .load(song.image)
-            .error(R.drawable.ic_album)
+            .error(R.drawable.ic_album_black)
             .circleCrop()
             .into(binding.imageDetailSongArtwork)
         binding.textSongDetailTitle.text = title

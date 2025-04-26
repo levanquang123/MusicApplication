@@ -3,11 +3,13 @@ package com.example.musicapplication.ui.playing
 import Song
 import android.animation.Animator
 import android.animation.AnimatorInflater
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import androidx.fragment.app.activityViewModels
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
@@ -22,6 +24,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
     private val viewModel: MiniPlayerViewModel by activityViewModels()
     private var mediaController: MediaController? = null
     private lateinit var pressedAnimator: Animator
+    private lateinit var rotationAnimator: ObjectAnimator
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +58,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
             mediaController?.let {
                 if (it.hasNextMediaItem()) {
                     it.seekToNextMediaItem()
+                    rotationAnimator.end()
                 }
             }
         } else if (v == binding.btnMiniPlayerFavorite) {
@@ -70,6 +74,12 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
 
     private fun setupAnimator() {
         pressedAnimator = AnimatorInflater.loadAnimator(requireContext(), R.animator.button_pressed)
+        rotationAnimator = ObjectAnimator
+            .ofFloat(binding.imageMiniPlayerArtwork, "rotation", 0f, 360f)
+        rotationAnimator.interpolator = LinearInterpolator()
+        rotationAnimator.duration = 12000
+        rotationAnimator.repeatCount = ObjectAnimator.INFINITE
+        rotationAnimator.repeatMode = ObjectAnimator.RESTART
     }
 
     private fun setupMediaController() {
@@ -114,8 +124,14 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
         viewModel.isPlaying.observe(viewLifecycleOwner) {
             if (it) { // playing
                 binding.btnMiniPlayerPlayPause.setImageResource(R.drawable.ic_pause_circle)
+                if (rotationAnimator.isPaused) {
+                    rotationAnimator.resume()
+                } else if (!rotationAnimator.isRunning) {
+                    rotationAnimator.start()
+                }
             } else {
                 binding.btnMiniPlayerPlayPause.setImageResource(R.drawable.ic_play_circle)
+                rotationAnimator.pause()
             }
         }
     }

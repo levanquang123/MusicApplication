@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.ComponentName
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.example.musicapplication.ui.playing.PlayBackService
+import com.example.musicapplication.ui.playing.PlaybackService
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -21,7 +21,7 @@ class MusicApplication : Application() {
     private fun createMediaPlayer() {
         val sessionToken = SessionToken(
             applicationContext,
-            ComponentName(applicationContext, PlayBackService::class.java)
+            ComponentName(applicationContext, PlaybackService::class.java)
         )
         controllerFuture = MediaController.Builder(applicationContext, sessionToken).buildAsync()
         controllerFuture.addListener({

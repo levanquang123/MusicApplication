@@ -12,6 +12,8 @@ import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedViewModel
 import com.example.musicapplication.ui.playing.MiniPlayerViewModel
+import com.example.musicapplication.ui.viewmodel.SharedViewModel
+import com.example.musicapplication.utils.MusicAppUtils
 
 class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecommendedBinding
@@ -37,7 +39,8 @@ class RecommendedFragment : PlayerBaseFragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    miniPlayerViewModel.setSong(song)
+                    val playlistName = MusicAppUtils.DefaultPlaylistName.RECOMMENDED.value
+                    playSong(song, index, playlistName)
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
@@ -55,8 +58,11 @@ class RecommendedFragment : PlayerBaseFragment() {
         recommendedViewModel.songs.observe(viewLifecycleOwner) { songs ->
             adapter.updateSongs(songs.subList(0, 16))
             moreRecommendedViewModel.setRecommendedSongs(songs)
+            val playlistName = MusicAppUtils.DefaultPlaylistName.RECOMMENDED.value
+            SharedViewModel.instance.setupPlaylist(songs, playlistName)
         }
     }
+
     private fun navigateToMoreRecommended() {
         requireActivity().supportFragmentManager
             .beginTransaction()

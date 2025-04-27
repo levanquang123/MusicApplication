@@ -1,10 +1,10 @@
 package com.example.musicapplication.ui.home.album.detail
 
-import Song
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.musicapplication.data.model.album.Album
+import com.example.musicapplication.data.model.song.Song
 
 class DetailAlbumViewModel : ViewModel() {
     private val _album = MutableLiveData<Album>()

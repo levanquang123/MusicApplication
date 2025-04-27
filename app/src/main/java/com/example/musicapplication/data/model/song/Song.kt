@@ -1,16 +1,52 @@
+package com.example.musicapplication.data.model.song
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "songs")
 open class Song(
-    @SerializedName("id") val id: String = "",
-    @SerializedName("title") val title: String = "",
-    @SerializedName("album") val album: String = "",
-    @SerializedName("artist") val artist: String = "",
-    @SerializedName("source") val source: String = "",
-    @SerializedName("image") val image: String = "",
-    @SerializedName("duration") val duration: Int = 0,
-    @SerializedName("favorite") var favorite: Boolean = false,
-    @SerializedName("counter") var counter: Int = 0,
-    @SerializedName("replay") var replay: Int = 0
+    @SerializedName("id")
+    @PrimaryKey
+    @ColumnInfo(name = "song_id")
+    var id: String = "",
+
+    @SerializedName("title")
+    @ColumnInfo(name = "title")
+    var title: String = "",
+
+    @SerializedName("album")
+    @ColumnInfo(name = "album")
+    var album: String = "",
+
+    @SerializedName("artist")
+    @ColumnInfo(name = "artist")
+    var artist: String = "",
+
+    @SerializedName("source")
+    @ColumnInfo(name = "source")
+    var source: String = "",
+
+    @SerializedName("image")
+    @ColumnInfo(name = "image")
+    var image: String = "",
+
+    @SerializedName("duration")
+    @ColumnInfo(name = "duration")
+    var duration: Int = 0,
+
+    @SerializedName("favorite")
+    @ColumnInfo(name = "favorite")
+    var favorite: Boolean = false,
+
+    @SerializedName("counter")
+    @ColumnInfo(name = "counter")
+    var counter: Int = 0,
+
+    @SerializedName("replay")
+    @ColumnInfo(name = "replay")
+    var replay: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

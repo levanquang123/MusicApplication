@@ -1,9 +1,9 @@
 package com.example.musicapplication.ui.dialog
 
-import Song
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.utils.OptionMenuUtils
 
 class SongOptionMenuViewModel : ViewModel() {

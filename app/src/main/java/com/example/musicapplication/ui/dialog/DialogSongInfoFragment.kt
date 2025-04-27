@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.dialog
 
-import Song
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentDialogSongInfoBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

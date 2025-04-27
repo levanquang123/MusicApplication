@@ -1,7 +1,8 @@
 package com.example.musicapplication.data.model
 
-import Song
 import androidx.media3.common.MediaItem
+import com.example.musicapplication.data.model.playlist.Playlist
+import com.example.musicapplication.data.model.song.Song
 
 data class PlayingSong(
     private var _song: Song? = null,

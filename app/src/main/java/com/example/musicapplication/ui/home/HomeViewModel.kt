@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.home
 
-import Song
 import SongList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +8,7 @@ import com.example.musicapplication.data.source.Result
 import androidx.lifecycle.viewModelScope
 import com.example.musicapplication.ResultCallback
 import com.example.musicapplication.data.model.album.Album
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.repository.AlbumRepositoryImpl
 import com.example.musicapplication.data.repository.SongRepositoryImpl
 import kotlinx.coroutines.Dispatchers

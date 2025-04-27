@@ -1,8 +1,8 @@
 package com.example.musicapplication.ui.dialog
 
-import Song
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.musicapplication.data.model.song.Song
 
 class DialogSongInfoViewModel : ViewModel() {
     private val _song = MutableLiveData<Song>()

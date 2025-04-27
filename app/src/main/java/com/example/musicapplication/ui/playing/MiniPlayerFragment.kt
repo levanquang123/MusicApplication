@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.playing
 
-import Song
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
@@ -15,6 +14,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentMiniPlayerBinding
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
@@ -102,15 +102,15 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setupObserve() {
-        SharedViewModel.instance.playingSong.observe(viewLifecycleOwner) {
+        SharedViewModel.instance?.playingSong?.observe(viewLifecycleOwner) {
             it.song?.let { song ->
                 showSongInfo(song)
             }
         }
-        SharedViewModel.instance.currentPlaylist.observe(viewLifecycleOwner) {
+        SharedViewModel.instance?.currentPlaylist?.observe(viewLifecycleOwner) {
             viewModel.setMediaItem(it.mediaItems)
         }
-        SharedViewModel.instance.indexToPlay.observe(viewLifecycleOwner) { index ->
+        SharedViewModel.instance?.indexToPlay?.observe(viewLifecycleOwner) { index ->
             if (index > -1 && mediaController != null && mediaController!!.mediaItemCount > index) {
                 mediaController!!.seekTo(index, 0)
                 mediaController!!.prepare()

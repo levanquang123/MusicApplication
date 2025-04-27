@@ -1,12 +1,12 @@
 package com.example.musicapplication.ui.home.recommended.more
 
-import Song
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentMoreRecommendedBinding
 import com.example.musicapplication.ui.home.recommended.SongAdapter
 

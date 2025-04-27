@@ -1,12 +1,12 @@
 package com.example.musicapplication.ui.home.recommended
 
-import Song
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentRecommendedBinding
 import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedFragment
@@ -59,7 +59,7 @@ class RecommendedFragment : PlayerBaseFragment() {
             adapter.updateSongs(songs.subList(0, 16))
             moreRecommendedViewModel.setRecommendedSongs(songs)
             val playlistName = MusicAppUtils.DefaultPlaylistName.RECOMMENDED.value
-            SharedViewModel.instance.setupPlaylist(songs, playlistName)
+            SharedViewModel.instance?.setupPlaylist(songs, playlistName)
         }
     }
 

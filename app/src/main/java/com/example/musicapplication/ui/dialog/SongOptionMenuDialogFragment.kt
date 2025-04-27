@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.dialog
 
-import Song
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.DialogFragmentSongOptionMenuBinding
 import com.example.musicapplication.databinding.ItemOptionMenuBinding
 import com.example.musicapplication.utils.OptionMenuUtils

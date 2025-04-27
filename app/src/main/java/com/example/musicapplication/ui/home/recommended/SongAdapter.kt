@@ -1,11 +1,11 @@
 package com.example.musicapplication.ui.home.recommended
 
-import Song
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.ItemSongBinding
 
 class SongAdapter(

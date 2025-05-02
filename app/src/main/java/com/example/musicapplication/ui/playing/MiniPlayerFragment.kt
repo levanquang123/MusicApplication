@@ -15,6 +15,7 @@ import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
+import com.example.musicapplication.data.repository.song.SongRepositoryImpl
 import com.example.musicapplication.databinding.FragmentMiniPlayerBinding
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
@@ -45,24 +46,35 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         pressedAnimator.setTarget(v)
         pressedAnimator.start()
-
-        if (v == binding.btnMiniPlayerPlayPause) {
-            mediaController?.let {
+        when (v) {
+            binding.btnMiniPlayerPlayPause -> mediaController?.let {
                 if (it.isPlaying) {
                     it.pause()
                 } else {
                     it.play()
                 }
             }
-        } else if (v == binding.btnMiniPlayerSkipNext) {
-            mediaController?.let {
-                if (it.hasNextMediaItem()) {
-                    it.seekToNextMediaItem()
-                    rotationAnimator.end()
+
+            binding.btnMiniPlayerSkipNext ->
+                mediaController?.let {
+                    if (it.hasNextMediaItem()) {
+                        it.seekToNextMediaItem()
+                        rotationAnimator.end()
+                    }
                 }
-            }
-        } else if (v == binding.btnMiniPlayerFavorite) {
-            // todo
+
+            binding.btnMiniPlayerFavorite -> setupFavorite()
+        }
+    }
+
+
+    private fun setupFavorite() {
+        val playingSong = SharedViewModel.instance?.playingSong?.value
+        playingSong?.let {
+            val song = it.song
+            song!!.favorite = !song.favorite
+            updateFavoriteStatus(song)
+            SharedViewModel.instance?.updateFavoriteStatus(song)
         }
     }
 
@@ -144,5 +156,14 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
             .error(R.drawable.ic_album_black)
             .circleCrop()
             .into(binding.imageMiniPlayerArtwork)
+            updateFavoriteStatus(song)
+    }
+    private fun updateFavoriteStatus(song: Song) {
+        val favoriteIcon = if (song.favorite) {
+            R.drawable.ic_favorite_on
+        } else {
+            R.drawable.ic_favorite_off
+        }
+        binding.btnMiniPlayerFavorite.setImageResource(favoriteIcon)
     }
 }

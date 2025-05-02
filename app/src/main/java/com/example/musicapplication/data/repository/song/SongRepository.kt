@@ -1,11 +1,12 @@
-package com.example.musicapplication.data.source
+package com.example.musicapplication.data.repository.song
 
 import SongList
 import com.example.musicapplication.ResultCallback
 import com.example.musicapplication.data.model.song.Song
+import com.example.musicapplication.data.source.Result
 import kotlinx.coroutines.flow.Flow
 
-interface SongDataSource {
+interface SongRepository {
     interface Local {
         val song: Flow<List<Song>>
 
@@ -18,9 +19,9 @@ interface SongDataSource {
         suspend fun update(song: Song)
 
         suspend fun updateFavorite(id: String, favorite: Boolean)
+    }
 
-        interface Remote {
-            suspend fun loadSongs(callback: ResultCallback<Result<SongList>>)
-        }
+    interface Remote {
+        suspend fun loadSongs(callback: ResultCallback<Result<SongList>>)
     }
 }

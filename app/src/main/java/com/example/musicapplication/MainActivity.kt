@@ -14,11 +14,12 @@ import com.example.musicapplication.databinding.ActivityMainBinding
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private val sharedViewModel: SharedViewModel by viewModels {
         val application = application as MusicApplication
-        SharedViewModel.Factory(application.getRecentSongRepository())
+        SharedViewModel.Factory(
+            application.getSongRepository(),
+            application.getRecentSongRepository())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

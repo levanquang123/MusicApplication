@@ -3,7 +3,7 @@ package com.example.musicapplication.data.source.remote
 import SongList
 import com.example.musicapplication.ResultCallback
 import com.example.musicapplication.data.source.Result
-import com.example.musicapplication.data.source.SongDataSource
+import com.example.musicapplication.data.source.remote.SongDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -10,11 +10,14 @@ import com.example.musicapplication.data.model.PlayingSong
 import com.example.musicapplication.data.model.RecentSong
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.repository.recent.RecentSongRepositoryImpl
+import com.example.musicapplication.data.repository.song.SongRepository
+import com.example.musicapplication.data.repository.song.SongRepositoryImpl
 import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SharedViewModel private constructor(
+    private val songRepository: SongRepositoryImpl,
     private val recentSongRepository: RecentSongRepositoryImpl
 ) : ViewModel() {
     private val _playingSong = PlayingSong()
@@ -48,6 +51,12 @@ class SharedViewModel private constructor(
         val recentSong = createRecentSong(song)
         viewModelScope.launch(Dispatchers.IO) {
             recentSongRepository.insert(recentSong)
+        }
+    }
+
+    fun updateFavoriteStatus(song: Song) {
+        viewModelScope.launch(Dispatchers.IO) {
+            songRepository.updateFavorite(song.id, song.favorite)
         }
     }
 
@@ -97,13 +106,22 @@ class SharedViewModel private constructor(
         _indexToPlay.value = index
     }
 
+    fun updateSongInDB(song: Song) {
+        viewModelScope.launch(Dispatchers.IO) {
+            ++song.counter
+            ++song.replay
+            songRepository.update(song)
+        }
+    }
+
     class Factory(
+        private val songRepository: SongRepositoryImpl,
         private val recentSongRepository: RecentSongRepositoryImpl
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SharedViewModel::class.java)) {
-                return SharedViewModel(recentSongRepository) as T
+                return SharedViewModel(songRepository, recentSongRepository) as T
             } else {
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

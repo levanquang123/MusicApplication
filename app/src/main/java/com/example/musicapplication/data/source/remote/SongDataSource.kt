@@ -1,12 +1,12 @@
-package com.example.musicapplication.data.repository
+package com.example.musicapplication.data.source.remote
 
 import SongList
 import com.example.musicapplication.ResultCallback
 import com.example.musicapplication.data.source.Result
 
-interface SongRepository {
+interface SongDataSource {
     interface Local {
-        // todo
+        //  todo
     }
 
     interface Remote {

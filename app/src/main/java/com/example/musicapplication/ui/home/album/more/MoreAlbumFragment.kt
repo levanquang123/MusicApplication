@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.album.Album
 import com.example.musicapplication.databinding.FragmentMoreAlbumBinding
@@ -19,7 +20,10 @@ class MoreAlbumFragment : Fragment() {
     private lateinit var adapter: MoreAlbumAdapter
     private val moreAlbumViewModel: MoreAlbumViewModel by activityViewModels()
     private val detailAlbumViewModel: DetailAlbumViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels{
+        val application = requireActivity().application as MusicApplication
+        HomeViewModel.Factory(application.getSongRepository())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

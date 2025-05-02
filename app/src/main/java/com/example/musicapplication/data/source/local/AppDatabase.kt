@@ -11,6 +11,7 @@ import com.example.musicapplication.data.model.album.Album
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.source.local.recent.RecentSongDao
+import com.example.musicapplication.data.source.local.song.SongDao
 
 @Database(
     entities = [

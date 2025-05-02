@@ -5,6 +5,7 @@ import android.content.ComponentName
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musicapplication.data.repository.recent.RecentSongRepositoryImpl
+import com.example.musicapplication.data.repository.song.SongRepositoryImpl
 import com.example.musicapplication.ui.playing.PlaybackService
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.example.musicapplication.utils.InjectionUtils
@@ -16,6 +17,8 @@ class MusicApplication : Application() {
     private lateinit var controllerFuture: ListenableFuture<MediaController>
     private var mediaController: MediaController? = null
     private lateinit var recentSongRepository: RecentSongRepositoryImpl
+    private lateinit var songRepository: SongRepositoryImpl
+
 
     override fun onCreate() {
         super.onCreate()
@@ -36,8 +39,8 @@ class MusicApplication : Application() {
                     mediaController?.let {
                         MediaPlayerViewModel.instance.setMediaController(it)
                     }
-                } catch (ignored: ExecutionException) {
-                } catch (ignored: InterruptedException) {
+                } catch (_: ExecutionException) {
+                } catch (_: InterruptedException) {
                 }
             } else {
                 mediaController = null
@@ -46,6 +49,10 @@ class MusicApplication : Application() {
     }
 
     private fun setupComponents() {
+        val songDataSource =
+            InjectionUtils.provideSongDataSource(applicationContext)
+        songRepository = InjectionUtils.provideSongRepository(songDataSource)
+
         val recentSongDataSource =
             InjectionUtils.provideRecentSongDataSource(applicationContext)
         recentSongRepository = InjectionUtils.provideRecentSongRepository(recentSongDataSource)
@@ -53,5 +60,9 @@ class MusicApplication : Application() {
 
     fun getRecentSongRepository(): RecentSongRepositoryImpl {
         return recentSongRepository
+    }
+
+    fun getSongRepository(): SongRepositoryImpl {
+        return songRepository
     }
 }

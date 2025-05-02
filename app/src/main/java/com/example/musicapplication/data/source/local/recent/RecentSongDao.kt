@@ -2,6 +2,7 @@ package com.example.musicapplication.data.source.local.recent
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.musicapplication.data.model.RecentSong
 import com.example.musicapplication.data.model.song.Song
@@ -12,6 +13,6 @@ interface RecentSongDao {
     @get:Query("SELECT * FROM recent_songs ORDER BY play_at DESC LIMIT 30")
     val recentSongs: Flow<List<Song>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg songs: RecentSong)
 }

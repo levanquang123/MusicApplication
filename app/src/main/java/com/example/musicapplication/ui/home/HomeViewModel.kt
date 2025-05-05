@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import com.example.musicapplication.data.source.Result
 import androidx.lifecycle.viewModelScope
 import com.example.musicapplication.ResultCallback
@@ -23,17 +22,18 @@ class HomeViewModel(
 
     private val _albums = MutableLiveData<List<Album>>()
     private val _songs = MutableLiveData<List<Song>>()
-
+    private val _localSongs = MutableLiveData<List<Song>>()
     val albums: LiveData<List<Album>>
         get() = _albums
     val songs: LiveData<List<Song>>
         get() = _songs
     val localSongs: LiveData<List<Song>>
-        get() = songRepository.song.asLiveData()
+        get() = _localSongs
 
     init {
         loadSongs()
         loadAlbums()
+        loadLocalSongs()
     }
 
     private fun loadAlbums() {
@@ -47,6 +47,13 @@ class HomeViewModel(
                     }
                 }
             })
+        }
+    }
+
+    private fun loadLocalSongs() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val songList = songRepository.songs
+            _localSongs.postValue(songList)
         }
     }
 

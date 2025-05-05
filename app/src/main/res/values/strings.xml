@@ -49,4 +49,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="not_available">N/a</string>
+    <string name="title_now_playing">Now playing</string>
+    <string name="text_more">…</string>
+    <string name="under_line">_ __ _</string>
+    <string name="text_time">--:--</string>
 </resources>

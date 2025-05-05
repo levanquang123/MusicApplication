@@ -3,6 +3,7 @@ package com.example.musicapplication.ui.playing
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,10 +16,10 @@ import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
-import com.example.musicapplication.data.repository.song.SongRepositoryImpl
 import com.example.musicapplication.databinding.FragmentMiniPlayerBinding
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
+import kotlin.jvm.java
 
 class MiniPlayerFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentMiniPlayerBinding
@@ -26,6 +27,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
     private var mediaController: MediaController? = null
     private lateinit var pressedAnimator: Animator
     private lateinit var rotationAnimator: ObjectAnimator
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +40,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
+        setupViewModel()
         setupAnimator()
         setupMediaController()
         setupObserve()
@@ -69,12 +72,12 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
 
 
     private fun setupFavorite() {
-        val playingSong = SharedViewModel.instance?.playingSong?.value
+        val playingSong = sharedViewModel.playingSong.value
         playingSong?.let {
             val song = it.song
             song!!.favorite = !song.favorite
             updateFavoriteStatus(song)
-            SharedViewModel.instance?.updateFavoriteStatus(song)
+            sharedViewModel.updateFavoriteStatus(song)
         }
     }
 
@@ -82,6 +85,13 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
         binding.btnMiniPlayerFavorite.setOnClickListener(this)
         binding.btnMiniPlayerPlayPause.setOnClickListener(this)
         binding.btnMiniPlayerSkipNext.setOnClickListener(this)
+        binding.root.setOnClickListener {
+            navigateToNowPlaying()
+        }
+    }
+
+    private fun setupViewModel() {
+        sharedViewModel = SharedViewModel.instance
     }
 
     private fun setupAnimator() {
@@ -99,30 +109,44 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
             controller?.let {
                 mediaController = it
                 setupListener()
+                setupObserveForMediaController()
             }
         }
     }
 
     private fun setupListener() {
+        mediaController?.addListener(object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                viewModel.setPlayingState(isPlaying)
+            }
+        })
+    }
+
+    private fun setupObserveForMediaController() {
         mediaController?.let {
-            it.addListener(object : Player.Listener {
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    viewModel.setPlayingState(isPlaying)
+            viewModel.mediaItems.observe(viewLifecycleOwner) { mediaItems ->
+                it.setMediaItems(mediaItems)
+            }
+            sharedViewModel.indexToPlay.observe(viewLifecycleOwner) { index ->
+                if (index > -1 && it.mediaItemCount > index) {
+                    it.seekTo(index, 0)
+                    it.prepare()
+//                    it.play()
                 }
-            })
+            }
         }
     }
 
     private fun setupObserve() {
-        SharedViewModel.instance?.playingSong?.observe(viewLifecycleOwner) {
+        sharedViewModel.playingSong.observe(viewLifecycleOwner) {
             it.song?.let { song ->
                 showSongInfo(song)
             }
         }
-        SharedViewModel.instance?.currentPlaylist?.observe(viewLifecycleOwner) {
+        sharedViewModel.currentPlaylist.observe(viewLifecycleOwner) {
             viewModel.setMediaItem(it.mediaItems)
         }
-        SharedViewModel.instance?.indexToPlay?.observe(viewLifecycleOwner) { index ->
+        sharedViewModel.indexToPlay.observe(viewLifecycleOwner) { index ->
             if (index > -1 && mediaController != null && mediaController!!.mediaItemCount > index) {
                 mediaController!!.seekTo(index, 0)
                 mediaController!!.prepare()
@@ -156,8 +180,9 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
             .error(R.drawable.ic_album_black)
             .circleCrop()
             .into(binding.imageMiniPlayerArtwork)
-            updateFavoriteStatus(song)
+        updateFavoriteStatus(song)
     }
+
     private fun updateFavoriteStatus(song: Song) {
         val favoriteIcon = if (song.favorite) {
             R.drawable.ic_favorite_on
@@ -165,5 +190,11 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
             R.drawable.ic_favorite_off
         }
         binding.btnMiniPlayerFavorite.setImageResource(favoriteIcon)
+    }
+
+    private fun navigateToNowPlaying() {
+        Intent(requireContext(), NowPlayingActivity::class.java).apply {
+            startActivity(this)
+        }
     }
 }

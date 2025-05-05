@@ -8,7 +8,7 @@ class LocalSongDataSource(
     private val songDao: SongDao
 ) : SongDataSource.Local {
 
-    override val song: Flow<List<Song>>
+    override val songs: List<Song>
         get() = songDao.songs
 
     override val favoriteSongs: Flow<List<Song>>

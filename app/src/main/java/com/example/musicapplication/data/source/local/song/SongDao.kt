@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SongDao {
     @get: Query("SELECT * FROM songs")
-    val songs: Flow<List<Song>>
+    val songs: List<Song>
 
     @get:Query("SELECT * FROM songs WHERE favorite = 1")
     val favoriteSongs: Flow<List<Song>>

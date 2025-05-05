@@ -16,6 +16,7 @@ import com.example.musicapplication.ui.viewmodel.SharedViewModel
 class PlaybackService : MediaSessionService() {
     private lateinit var mediaSession: MediaSession
     private lateinit var listener: Player.Listener
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
         return mediaSession
@@ -25,6 +26,7 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         initSessionAndPlayer()
         setupListener()
+        sharedViewModel = SharedViewModel.instance
     }
 
     override fun onDestroy() {
@@ -48,9 +50,9 @@ class PlaybackService : MediaSessionService() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 val playlistChanged =
                     reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED
-                val indexToPlay = SharedViewModel.instance?.indexToPlay?.value ?: 0
+                val indexToPlay = sharedViewModel.indexToPlay.value ?: 0
                 if (!playlistChanged || indexToPlay == 0) {
-                    SharedViewModel.instance?.setPlayingSong(player.currentMediaItemIndex)
+                    sharedViewModel.setPlayingSong(player.currentMediaItemIndex)
                     saveDataToDB()
                 }
             }
@@ -67,7 +69,7 @@ class PlaybackService : MediaSessionService() {
             handler?.postDelayed({
                 val player = mediaSession.player
                 if (player.isPlaying) {
-                    SharedViewModel.instance?.insertRecentSongToDB(song)
+                    sharedViewModel.insertRecentSongToDB(song)
                     saveCounterAndReplay()
                 }
             }, 5000)
@@ -85,12 +87,12 @@ class PlaybackService : MediaSessionService() {
             handlerThread.start()
             val handler = Handler(handlerThread.looper)
             handler.post {
-                SharedViewModel.instance?.updateSongInDB(song)
+                sharedViewModel.updateSongInDB(song)
             }
         }
     }
 
     private fun extractSong(): Song? {
-        return SharedViewModel.instance?.playingSong?.value?.song
+        return sharedViewModel.playingSong.value?.song
     }
 }

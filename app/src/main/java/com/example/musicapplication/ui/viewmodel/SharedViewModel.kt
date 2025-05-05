@@ -10,7 +10,6 @@ import com.example.musicapplication.data.model.PlayingSong
 import com.example.musicapplication.data.model.RecentSong
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.repository.recent.RecentSongRepositoryImpl
-import com.example.musicapplication.data.repository.song.SongRepository
 import com.example.musicapplication.data.repository.song.SongRepositoryImpl
 import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +19,9 @@ class SharedViewModel private constructor(
     private val songRepository: SongRepositoryImpl,
     private val recentSongRepository: RecentSongRepositoryImpl
 ) : ViewModel() {
+
+    private var _isReady = MutableLiveData<Boolean>()
+    val isReady: LiveData<Boolean> = _isReady
     private val _playingSong = PlayingSong()
     private val _playingSongLiveData = MutableLiveData<PlayingSong>()
     private val _currentPlaylist = MutableLiveData<Playlist>()
@@ -31,10 +33,10 @@ class SharedViewModel private constructor(
     val indexToPlay: LiveData<Int> = _indexToPlay
 
     init {
-        if (instance == null) {
+        if (_instance == null) {
             synchronized(SharedViewModel::class.java) {
-                if (instance == null) {
-                    instance = this
+                if (_instance == null) {
+                    _instance = this
                 }
             }
         }
@@ -46,6 +48,29 @@ class SharedViewModel private constructor(
             _playlists[playlistName.value] = playlist
         }
     }
+
+    fun loadPreviousSessionSong(songId: String?, playlistName: String?) {
+        if (playlistName != null) {
+            setCurrentPlaylist(playlistName)
+        }
+        var playlist = _playlists.getOrDefault(playlistName, null)
+        if (playlist == null) {
+            playlist = _playlists.getOrDefault(DefaultPlaylistName.DEFAULT.value, null)
+        }
+        if (songId != null && playlist != null) {
+            _playingSong.playlist = playlist
+            val songList = playlist.songs
+            val index = songList.indexOfFirst { it.id == songId }
+            if (index >= 0) {
+                val song = songList[index]
+                _playingSong.song = song
+                _playingSong.currentIndex = index
+                setIndexToPlay(index)
+            }
+            updatePlayingSong()
+        }
+    }
+
 
     fun insertRecentSongToDB(song: Song) {
         val recentSong = createRecentSong(song)
@@ -64,14 +89,12 @@ class SharedViewModel private constructor(
         return RecentSong.Builder(song).build()
     }
 
-    fun setupPlaylist(
-        songs: List<
-                Song>?, playlistName: String
-    ) {
+    fun setupPlaylist(songs: List<Song>, playlistName: String) {
         val playlist = _playlists.getOrDefault(playlistName, null)
         playlist?.let {
             it.updateSongList(songs)
             updatePlaylist(it)
+            _isReady.value = true
         }
     }
 
@@ -129,7 +152,8 @@ class SharedViewModel private constructor(
     }
 
     companion object {
-        var instance: SharedViewModel? = null
-            private set
+        private var _instance : SharedViewModel? = null
+        val instance: SharedViewModel
+            get() = _instance!!
     }
 }

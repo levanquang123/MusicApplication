@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SongRepository {
     interface Local {
-        val song: Flow<List<Song>>
+        val songs: List<Song>
 
         val favoriteSongs: Flow<List<Song>>
 

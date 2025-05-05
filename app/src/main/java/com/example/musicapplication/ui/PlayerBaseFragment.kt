@@ -9,9 +9,11 @@ import com.example.musicapplication.ui.viewmodel.SharedViewModel
 
 open class PlayerBaseFragment : Fragment() {
     protected fun playSong(song: Song, index: Int, playlistName: String) {
-        SharedViewModel.instance?.setCurrentPlaylist(playlistName)
-        SharedViewModel.instance?.setIndexToPlay(index)
+        val sharedViewModel = SharedViewModel.instance
+        sharedViewModel.setCurrentPlaylist(playlistName)
+        sharedViewModel.setIndexToPlay(index)
     }
+
     protected fun showOptionMenu(song: Song) {
         val menuDialogFragment = SongOptionMenuDialogFragment.newInstance
         val menuDialogViewMode: SongOptionMenuViewModel by activityViewModels()

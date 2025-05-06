@@ -55,7 +55,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
             binding.btnShuffle -> {}
             binding.btnSkipPrevNowPlaying -> setupSkipPrevious()
             binding.btnSkipNextNowPlaying -> setupSkipNext()
-            binding.btnRepeat -> {}
+            binding.btnRepeat -> setupRepeatAction()
             binding.btnShareNowPlaying -> {}
             else -> {}
         }
@@ -86,6 +86,18 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
                 it.seekToNextMediaItem()
                 rotationAnimator.end()
             }
+        }
+    }
+
+    private fun setupRepeatAction() {
+        mediaController?.let {
+            val repeatMode = it.repeatMode
+            when (repeatMode) {
+                Player.REPEAT_MODE_OFF -> it.repeatMode = Player.REPEAT_MODE_ONE
+                Player.REPEAT_MODE_ONE -> it.repeatMode = Player.REPEAT_MODE_ALL
+                Player.REPEAT_MODE_ALL -> it.repeatMode = Player.REPEAT_MODE_OFF
+            }
+            showRepeatMode()
         }
     }
 
@@ -180,6 +192,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
                 .error(R.drawable.ic_album)
                 .circleCrop()
                 .into(binding.imageArtworkNowPlaying)
+            showRepeatMode()
         }
     }
 
@@ -194,6 +207,18 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         binding.textTotalDuration.text = durationLabel
     }
 
+    private fun showRepeatMode() {
+        mediaController?.let {
+            val iconId = when(it.repeatMode) {
+                Player.REPEAT_MODE_OFF -> R.drawable.ic_repeat_off
+                Player.REPEAT_MODE_ALL -> R.drawable.ic_repeat_all
+                Player.REPEAT_MODE_ONE -> R.drawable.ic_repeat_one
+                else -> R.drawable.ic_repeat_off
+            }
+            binding.btnRepeat.setImageResource(iconId)
+        }
+
+    }
     private fun setupMediaListener() {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {

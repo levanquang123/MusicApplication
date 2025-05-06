@@ -2,10 +2,12 @@ package com.example.musicapplication.ui.playing
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.viewModels
@@ -28,6 +30,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var seekBarHandler: Handler
     private lateinit var seekbarCallback: Runnable
     private val nowPlayingViewModel: NowPlayingViewModel by viewModels()
+    private lateinit var rotationAnimator: ObjectAnimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +75,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         mediaController?.let {
             if (it.hasPreviousMediaItem()) {
                 it.seekToPreviousMediaItem()
-                // todo
+                rotationAnimator.end()
             }
         }
     }
@@ -81,11 +84,10 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         mediaController?.let {
             if (it.hasNextMediaItem()) {
                 it.seekToNextMediaItem()
-                // todo
+                rotationAnimator.end()
             }
         }
     }
-
 
     private fun setupView() {
         binding.btnPlayPauseNowPlaying.setOnClickListener(this)
@@ -124,6 +126,15 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
                 R.drawable.ic_play_circle
             }
             binding.btnPlayPauseNowPlaying.setImageResource(iconId)
+            if (isPlaying) {
+                if (rotationAnimator.isPaused) {
+                    rotationAnimator.resume()
+                } else {
+                    rotationAnimator.start()
+                }
+            } else {
+                rotationAnimator.pause()
+            }
         }
     }
 
@@ -131,6 +142,11 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         MediaPlayerViewModel.instance.mediaController.observe(this) { controller ->
             mediaController = controller
             sharedViewModel.playingSong.observe(this) { playingSong ->
+                mediaController?.let {
+                    if (it.isPlaying) {
+                        nowPlayingViewModel.setIsPlaying(true)
+                    }
+                }
                 setupSeekBar()
                 showSongInfo(playingSong.song)
             }
@@ -185,14 +201,14 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                if(mediaController!!.isPlaying) {
+                if (mediaController!!.isPlaying) {
                     updateSeekBarMaxValue()
                     updateDuration()
                 }
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if(playbackState == Player.STATE_READY) {
+                if (playbackState == Player.STATE_READY) {
                     updateSeekBarMaxValue()
                     updateDuration()
                 }
@@ -203,5 +219,11 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupAnimator() {
         pressedAnimator = AnimatorInflater.loadAnimator(this, R.animator.button_pressed)
+        rotationAnimator = ObjectAnimator
+            .ofFloat(binding.imageArtworkNowPlaying, "rotation", 0f, 360f)
+        rotationAnimator.interpolator = LinearInterpolator()
+        rotationAnimator.duration = 12000
+        rotationAnimator.repeatCount = ObjectAnimator.INFINITE
+        rotationAnimator.repeatMode = ObjectAnimator.RESTART
     }
 }

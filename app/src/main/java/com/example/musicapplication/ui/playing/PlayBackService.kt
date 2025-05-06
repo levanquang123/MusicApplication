@@ -1,5 +1,7 @@
 package com.example.musicapplication.ui.playing
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -17,7 +19,16 @@ class PlaybackService : MediaSessionService() {
     private lateinit var mediaSession: MediaSession
     private lateinit var listener: Player.Listener
     private lateinit var sharedViewModel: SharedViewModel
-
+    private val singleTopActivity: PendingIntent
+        get() {
+            val intent = Intent(applicationContext, NowPlayingActivity::class.java)
+            return PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
         return mediaSession
     }
@@ -41,6 +52,8 @@ class PlaybackService : MediaSessionService() {
             .setAudioAttributes(AudioAttributes.DEFAULT, true)
             .build()
         val builder = MediaSession.Builder(this, player)
+        val intent = singleTopActivity
+        builder.setSessionActivity(intent)
         mediaSession = builder.build()
     }
 

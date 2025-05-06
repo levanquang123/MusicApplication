@@ -3,12 +3,14 @@ package com.example.musicapplication.ui.playing
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import androidx.activity.enableEdgeToEdge
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
@@ -23,6 +25,8 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
     private var mediaController: MediaController? = null
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var pressedAnimator: Animator
+    private lateinit var seekBarHandler: Handler
+    private lateinit var seekbarCallback: Runnable
     private val nowPlayingViewModel: NowPlayingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +39,21 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         setupAnimator()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        seekBarHandler.removeCallbacks(seekbarCallback)
+    }
+
     override fun onClick(v: View) {
         pressedAnimator.setTarget(v)
         pressedAnimator.start()
         when (v) {
             binding.btnPlayPauseNowPlaying -> setupPlayPauseAction()
+            binding.btnShuffle -> {}
+            binding.btnSkipPrevNowPlaying -> setupSkipPrevious()
+            binding.btnSkipNextNowPlaying -> setupSkipNext()
+            binding.btnRepeat -> {}
+            binding.btnShareNowPlaying -> {}
             else -> {}
         }
     }
@@ -54,6 +68,25 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun setupSkipPrevious() {
+        mediaController?.let {
+            if (it.hasPreviousMediaItem()) {
+                it.seekToPreviousMediaItem()
+                // todo
+            }
+        }
+    }
+
+    private fun setupSkipNext() {
+        mediaController?.let {
+            if (it.hasNextMediaItem()) {
+                it.seekToNextMediaItem()
+                // todo
+            }
+        }
+    }
+
+
     private fun setupView() {
         binding.btnPlayPauseNowPlaying.setOnClickListener(this)
         binding.btnShuffle.setOnClickListener(this)
@@ -62,6 +95,24 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnRepeat.setOnClickListener(this)
         binding.btnShareNowPlaying.setOnClickListener(this)
         binding.btnFavoriteNowPlaying.setOnClickListener(this)
+        binding.toolbarNowPlaying.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        binding.seekBarNowPlaying.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    mediaController?.seekTo(progress.toLong())
+                }
+                binding.textLabelCurrentDuration.text =
+                    nowPlayingViewModel.getTimeLabel(progress.toLong())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 
     private fun setupViewModel() {
@@ -80,14 +131,31 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         MediaPlayerViewModel.instance.mediaController.observe(this) { controller ->
             mediaController = controller
             sharedViewModel.playingSong.observe(this) { playingSong ->
+                setupSeekBar()
                 showSongInfo(playingSong.song)
             }
             setupMediaListener()
         }
     }
 
+    private fun setupSeekBar() {
+        seekBarHandler = Looper.myLooper()?.let { Handler(it) }!!
+        seekbarCallback = object : Runnable {
+            override fun run() {
+                if (mediaController != null) {
+                    val currentPosition = mediaController!!.currentPosition
+                    binding.seekBarNowPlaying.progress = currentPosition.toInt()
+                }
+                seekBarHandler.postDelayed(this, 1000)
+            }
+        }
+        seekBarHandler.post(seekbarCallback)
+    }
+
     private fun showSongInfo(song: Song?) {
         if (song != null) {
+            updateSeekBarMaxValue()
+            updateDuration()
             binding.textAlbumNowPlaying.text = song.album
             binding.textSongTitleNowPlaying.text = song.title
             binding.textSongArtistNowPlaying.text = song.artist
@@ -99,10 +167,35 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun updateSeekBarMaxValue() {
+        val currentPos = mediaController?.currentPosition ?: 0
+        binding.seekBarNowPlaying.progress = currentPos.toInt()
+        binding.seekBarNowPlaying.max = nowPlayingViewModel.getDuration(mediaController)
+    }
+
+    private fun updateDuration() {
+        val durationLabel = nowPlayingViewModel.getTimeLabel(mediaController?.duration ?: 0)
+        binding.textTotalDuration.text = durationLabel
+    }
+
     private fun setupMediaListener() {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 nowPlayingViewModel.setIsPlaying(isPlaying)
+            }
+
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                if(mediaController!!.isPlaying) {
+                    updateSeekBarMaxValue()
+                    updateDuration()
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if(playbackState == Player.STATE_READY) {
+                    updateSeekBarMaxValue()
+                    updateDuration()
+                }
             }
         }
         mediaController?.addListener(listener)

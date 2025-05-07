@@ -17,6 +17,9 @@ interface SongDao {
     @get:Query("SELECT * FROM songs WHERE favorite = 1")
     val favoriteSongs: Flow<List<Song>>
 
+    @Query("SELECT * FROM songs WHERE song_id = :id")
+    suspend fun getSongById(id: String): Song?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(vararg songs: Song)
 

@@ -56,6 +56,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
             binding.btnSkipPrevNowPlaying -> setupSkipPrevious()
             binding.btnSkipNextNowPlaying -> setupSkipNext()
             binding.btnRepeat -> setupRepeatAction()
+            binding.btnFavoriteNowPlaying -> setupFavoriteAction()
             binding.btnShareNowPlaying -> {}
             else -> {}
         }
@@ -99,6 +100,27 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
             }
             showRepeatMode()
         }
+    }
+
+    private fun setupFavoriteAction() {
+        val playingSong = sharedViewModel.playingSong.value
+        playingSong?.let {
+            val song = it.song
+            if (song != null) {
+                song.favorite = !song.favorite
+                showFavoriteState(song)
+                sharedViewModel.updateFavoriteStatus(song)
+            }
+        }
+    }
+
+    private fun showFavoriteState(song: Song) {
+        val favoriteIcon = if (song.favorite) {
+            R.drawable.ic_favorite_on
+        } else {
+            R.drawable.ic_favorite_off
+        }
+        binding.btnFavoriteNowPlaying.setImageResource(favoriteIcon)
     }
 
     private fun setupView() {
@@ -194,6 +216,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
                 .into(binding.imageArtworkNowPlaying)
             showRepeatMode()
             showShuffleState()
+            showFavoriteState(song)
         }
     }
 

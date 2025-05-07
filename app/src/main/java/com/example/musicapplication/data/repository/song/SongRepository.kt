@@ -14,6 +14,8 @@ interface SongRepository {
 
         suspend fun insert(vararg songs: Song)
 
+        suspend fun getSongById(id: String): Song?
+
         suspend fun delete(song: Song)
 
         suspend fun update(song: Song)

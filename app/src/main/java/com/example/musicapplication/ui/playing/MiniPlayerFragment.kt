@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
+import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentMiniPlayerBinding
@@ -23,7 +24,11 @@ import kotlin.jvm.java
 
 class MiniPlayerFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentMiniPlayerBinding
-    private val viewModel: MiniPlayerViewModel by activityViewModels()
+    private val viewModel: MiniPlayerViewModel by activityViewModels {
+        val application = requireActivity().application as MusicApplication
+        val repository = application.getSongRepository()
+        MiniPlayerViewModel.Factory(repository)
+    }
     private var mediaController: MediaController? = null
     private lateinit var pressedAnimator: Animator
     private lateinit var rotationAnimator: ObjectAnimator
@@ -37,6 +42,19 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        val currentPlayingSong = sharedViewModel.playingSong.value?.song
+        currentPlayingSong?.let {
+            val songId = it.id
+            viewModel.getCurrentPlayingSong(songId)
+            viewModel.currentPlayingSong.observe(viewLifecycleOwner) { song ->
+                if (song != null) {
+                    updateFavoriteStatus(song)
+                }
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()

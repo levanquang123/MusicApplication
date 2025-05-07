@@ -14,6 +14,10 @@ class LocalSongDataSource(
     override val favoriteSongs: Flow<List<Song>>
         get() = songDao.favoriteSongs
 
+    override suspend fun getSongById(id: String): Song? {
+        return songDao.getSongById(id)
+    }
+
     override suspend fun insert(vararg songs: Song) {
         songDao.insert(*songs)
     }

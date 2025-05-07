@@ -52,7 +52,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         pressedAnimator.start()
         when (v) {
             binding.btnPlayPauseNowPlaying -> setupPlayPauseAction()
-            binding.btnShuffle -> {}
+            binding.btnShuffle -> setupShuffleAction()
             binding.btnSkipPrevNowPlaying -> setupSkipPrevious()
             binding.btnSkipNextNowPlaying -> setupSkipNext()
             binding.btnRepeat -> setupRepeatAction()
@@ -193,6 +193,27 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
                 .circleCrop()
                 .into(binding.imageArtworkNowPlaying)
             showRepeatMode()
+            showShuffleState()
+        }
+    }
+
+    private fun setupShuffleAction() {
+        mediaController?.let {
+            val isShuffle = it.shuffleModeEnabled
+            it.shuffleModeEnabled = !isShuffle
+            showShuffleState()
+        }
+    }
+
+    private fun showShuffleState() {
+        mediaController?.let {
+            val isShuffle = it.shuffleModeEnabled
+            val iconId = if (isShuffle) {
+                R.drawable.ic_shuffle_on
+            } else {
+                R.drawable.ic_shuffle
+            }
+            binding.btnShuffle.setImageResource(iconId)
         }
     }
 

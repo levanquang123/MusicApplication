@@ -1,0 +1,19 @@
+[33md44d50c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m loi
+[33m73288ba[m impl repeat mode
+[33mfaed963[m impl rotation disc
+[33m55d8aeb[m impl control seekbar
+[33m504c2a2[m designed now playing
+[33mcb07880[m save counter and replay to local database
+[33m6b47f10[m connect success to room database
+[33m65bf2a9[m impl the music disc rotation function
+[33md2185ff[m impl play next
+[33m0548665[m impl playback funtion
+[33m86016d5[m design miniplayer
+[33mc4eb1b3[m impl DialogSongInfoFragment
+[33m5cb4c2f[m Design the song's options menu screen
+[33m7c67936[m impl interface more recommended
+[33mb958e8c[m advise RecommendedFragment
+[33m04c7870[m impl detail album
+[33md29d9a9[m designed detail album
+[33m745f45e[m Load data for album and songs
+[33mb927933[m First commit

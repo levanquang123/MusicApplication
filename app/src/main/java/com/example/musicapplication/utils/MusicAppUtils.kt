@@ -1,6 +1,7 @@
 package com.example.musicapplication.utils
 
 object MusicAppUtils {
+    const val EXTRA_CURRENT_FRACTION = "EXTRA_CURRENT_FRACTION"
     enum class DefaultPlaylistName(val value: String) {
         DEFAULT("Default"),
         FAVORITES("Favorites"),

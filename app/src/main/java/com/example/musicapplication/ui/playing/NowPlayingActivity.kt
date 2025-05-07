@@ -3,6 +3,8 @@ package com.example.musicapplication.ui.playing
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +13,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -21,6 +24,7 @@ import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.ActivityNowPlayingBinding
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
+import com.example.musicapplication.utils.MusicAppUtils
 
 class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityNowPlayingBinding
@@ -31,6 +35,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var seekbarCallback: Runnable
     private val nowPlayingViewModel: NowPlayingViewModel by viewModels()
     private lateinit var rotationAnimator: ObjectAnimator
+    private var currentFraction: Float = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +43,21 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
         setupView()
         setupViewModel()
+        readIncomingIntent()
         setupMediaController()
         setupAnimator()
     }
 
+//    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+//    override fun onPause() {
+//        super.onPause()
+//        if (isFinishing) {
+//            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, R.anim.fade_in, R.anim.slide_down)
+//        }
+//    }
+    private fun readIncomingIntent() {
+        currentFraction = intent.getFloatExtra(MusicAppUtils.EXTRA_CURRENT_FRACTION, 0f)
+    }
     override fun onDestroy() {
         super.onDestroy()
         seekBarHandler.removeCallbacks(seekbarCallback)
@@ -132,6 +148,12 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnShareNowPlaying.setOnClickListener(this)
         binding.btnFavoriteNowPlaying.setOnClickListener(this)
         binding.toolbarNowPlaying.setNavigationOnClickListener {
+            rotationAnimator.pause()
+            val intent = Intent().apply {
+                rotationAnimator.pause()
+                putExtra(MusicAppUtils.EXTRA_CURRENT_FRACTION, rotationAnimator.animatedFraction)
+            }
+            setResult(RESULT_OK, intent)
             onBackPressedDispatcher.onBackPressed()
         }
         binding.seekBarNowPlaying.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -294,5 +316,6 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         rotationAnimator.duration = 12000
         rotationAnimator.repeatCount = ObjectAnimator.INFINITE
         rotationAnimator.repeatMode = ObjectAnimator.RESTART
+        rotationAnimator.setCurrentFraction(currentFraction)
     }
 }

@@ -13,15 +13,15 @@
 
     <fragment
         android:id="@+id/navigation_library"
-        android:name="com.example.musicapplication.ui.library.DashboardFragment"
+        android:name="com.example.musicapplication.ui.library.LibraryFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_library" />
 
     <fragment
         android:id="@+id/navigation_discovery"
-        android:name="com.example.musicapplication.ui.discovery.NotificationsFragment"
+        android:name="com.example.musicapplication.ui.discovery.DiscoveryFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_discovery" />
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.musicapplication.ui.settings.SettingsFragment"

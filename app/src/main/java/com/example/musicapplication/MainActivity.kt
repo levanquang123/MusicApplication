@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -67,6 +69,18 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         saveCurrentSong()
     }
+
+    override fun onResume() {
+        super.onResume()
+        sharedViewModel.playingSong.observe(this) {
+            if (it.song != null) {
+                binding.fcvMiniPlayer.visibility = VISIBLE
+            } else {
+                binding.fcvMiniPlayer.visibility = GONE
+            }
+        }
+    }
+
 
     private fun setupBottomNav() {
         val navView: BottomNavigationView = binding.navView

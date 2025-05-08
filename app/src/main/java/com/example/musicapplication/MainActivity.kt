@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.DisplayMetrics.DENSITY_DEFAULT
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +24,7 @@ import com.example.musicapplication.databinding.ActivityMainBinding
 import com.example.musicapplication.ui.home.HomeViewModel
 import com.example.musicapplication.ui.viewmodel.PermissionViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
+import com.example.musicapplication.utils.MusicAppUtils
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
@@ -99,6 +102,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupComponents() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                MusicAppUtils.DENSITY = windowMetrics.density
+            } else {
+                MusicAppUtils.DENSITY = 1f * windowMetrics.bounds.width() / DENSITY_DEFAULT
+            }
+        } else {
+            val displayMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            MusicAppUtils.DENSITY = displayMetrics.density
+        }
         sharedViewModel.initPlaylist()
         sharedPreferences = getSharedPreferences(
             "com.example.musicapplication.preff_file",

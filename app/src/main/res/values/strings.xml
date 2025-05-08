@@ -59,4 +59,6 @@
     <string name="title_favorite">Favorite songs</string>
     <string name="text_number_of_songs">Number_of_songs: %d</string>
     <string name="text_album_name">Album name</string>
+    <string name="label_create_playlist">Create playlist</string>
+    <string name="title_playlist">Playlists</string>
 </resources>

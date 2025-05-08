@@ -1,10 +1,15 @@
 package com.example.musicapplication
 
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,7 +18,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.musicapplication.databinding.ActivityMainBinding
 import com.example.musicapplication.ui.home.HomeViewModel
+import com.example.musicapplication.ui.viewmodel.PermissionViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -30,6 +37,22 @@ class MainActivity : AppCompatActivity() {
         val application = application as MusicApplication
         HomeViewModel.Factory(application.getSongRepository())
     }
+
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                val snackBar = Snackbar.make(
+                    binding.root.rootView,
+                    getString(R.string.permission_denied),
+                    Snackbar.LENGTH_LONG
+                )
+                snackBar.setAnchorView(R.id.nav_view)
+                snackBar.show()
+            } else {
+                PermissionViewModel.instance.grantPermission()
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +98,38 @@ class MainActivity : AppCompatActivity() {
                 loadPreviousSessionSong()
                 currentSongLoaded = true
             }
+        }
+        PermissionViewModel.instance
+            .permissionAsked
+            .observe(this) {
+                if (it) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        checkPostNotificationPermission()
+                    }
+                }
+            }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkPostNotificationPermission() {
+        val permission = android.Manifest.permission.POST_NOTIFICATIONS
+        val isPermissionGranted = ActivityCompat
+            .checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+        if (isPermissionGranted) {
+            PermissionViewModel.instance.grantPermission()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+            val snackBar = Snackbar.make(
+                binding.root.rootView,
+                getString(R.string.permission_denied),
+                Snackbar.LENGTH_LONG
+            )
+            snackBar.setAction(R.string.action_agree) {
+                permissionLauncher.launch(permission)
+            }
+            snackBar.setAnchorView(R.id.nav_view)
+            snackBar.show()
+        } else {
+            permissionLauncher.launch(permission)
         }
     }
 

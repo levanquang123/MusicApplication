@@ -42,22 +42,17 @@ class HomeFragment : Fragment() {
     private fun setupObserver() {
         homeViewModel.albums.observe(viewLifecycleOwner) {
             albumViewModel.setAlbums(it)
-            Log.d("HomeViewModel", "Abum đã được gọi.")
         }
         homeViewModel.songs.observe(viewLifecycleOwner) {
             homeViewModel.saveSongsToDB()
-            Log.d("HomeViewModel", "Hàm saveSongsToDB() đã được gọi.")
         }
         homeViewModel.localSongs.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 homeViewModel.songs.observe(viewLifecycleOwner) { remoteSongs ->
                     songViewModel.setSongs(remoteSongs)
-                    Log.d("HomeViewModel", "empty đã được gọi.")
                 }
             } else {
                 songViewModel.setSongs(it)
-                Log.d("HomeViewModel","lấy trong local đã được gọi.")
-
             }
         }
     }

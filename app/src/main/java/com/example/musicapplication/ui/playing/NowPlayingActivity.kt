@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
@@ -48,13 +49,20 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         setupAnimator()
     }
 
-//    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-//    override fun onPause() {
-//        super.onPause()
-//        if (isFinishing) {
-//            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, R.anim.fade_in, R.anim.slide_down)
-//        }
-//    }
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing) {
+            // nếu hệ điều hành Android hiện tại là Android 14+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(
+                    OVERRIDE_TRANSITION_CLOSE, R.anim.fade_in, R.anim.slide_down
+                )
+            } else { // các hệ điều hành cũ hơn:
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.fade_in, R.anim.slide_down)
+            }
+        }
+    }
     private fun readIncomingIntent() {
         currentFraction = intent.getFloatExtra(MusicAppUtils.EXTRA_CURRENT_FRACTION, 0f)
     }

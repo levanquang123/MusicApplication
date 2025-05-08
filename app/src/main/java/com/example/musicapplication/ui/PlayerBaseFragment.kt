@@ -5,10 +5,27 @@ import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.ui.dialog.SongOptionMenuDialogFragment
 import com.example.musicapplication.ui.dialog.SongOptionMenuViewModel
+import com.example.musicapplication.ui.viewmodel.PermissionViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
 
 open class PlayerBaseFragment : Fragment() {
     protected fun playSong(song: Song, index: Int, playlistName: String) {
+        val isPermissionGranted = PermissionViewModel.instance.permissionGranted.value
+        if (isPermissionGranted != null && isPermissionGranted) {
+            doNavigate(index, playlistName)
+        } else if (!PermissionViewModel.isRegistered) {
+            PermissionViewModel.instance
+                .permissionGranted
+                .observe(requireActivity()) {
+                    if (it) {
+                        doNavigate(index, playlistName)
+                    }
+                }
+            PermissionViewModel.isRegistered = true
+        }
+    }
+
+    private fun doNavigate(index: Int, playlistName: String) {
         val sharedViewModel = SharedViewModel.instance
         sharedViewModel.setCurrentPlaylist(playlistName)
         sharedViewModel.setIndexToPlay(index)

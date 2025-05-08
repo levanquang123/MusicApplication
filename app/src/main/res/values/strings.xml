@@ -53,4 +53,6 @@
     <string name="text_more">…</string>
     <string name="under_line">_ __ _</string>
     <string name="text_time">--:--</string>
+    <string name="permission_denied">This application cannot play music if you  dont alow it use post  nofitication permisstion</string>
+    <string name="action_agree">Agree</string>
 </resources>

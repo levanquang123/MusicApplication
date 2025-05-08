@@ -171,7 +171,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
                 if (index > -1 && it.mediaItemCount > index) {
                     it.seekTo(index, 0)
                     it.prepare()
-//                    it.play()
+                    it.play()
                 }
             }
         }

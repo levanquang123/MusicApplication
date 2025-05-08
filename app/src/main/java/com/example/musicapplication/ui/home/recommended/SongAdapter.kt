@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.ItemSongBinding
+import com.example.musicapplication.ui.viewmodel.PermissionViewModel
 
 class SongAdapter(
     private val onSongClickListener: OnSongClickListener,
@@ -53,6 +54,10 @@ class SongAdapter(
                 .error(R.drawable.ic_album_black)
                 .into(binding.imageItemSongArtwork)
             binding.root.setOnClickListener {
+                val isGranted = PermissionViewModel.instance.permissionGranted.value
+                if (isGranted == null || !isGranted) {
+                    PermissionViewModel.instance.askPermission()
+                }
                 onSongClickListener.onClick(song, index)
             }
             binding.btnItemSongOption.setOnClickListener {

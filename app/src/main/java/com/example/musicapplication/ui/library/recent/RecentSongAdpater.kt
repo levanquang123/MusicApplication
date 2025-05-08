@@ -63,7 +63,7 @@ class RecentSongAdapter(
             binding.textItemSongArtist.text = song.artist
             Glide.with(binding.root)
                 .load(song.image)
-                .error(R.drawable.ic_album)
+                .error(R .drawable.ic_album)
                 .into(binding.imageItemSongArtwork)
             binding.root.setOnClickListener {
                 songListener.onClick(song, index)

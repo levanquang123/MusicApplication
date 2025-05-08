@@ -9,15 +9,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.databinding.FragmentLibraryBinding
+import com.example.musicapplication.ui.library.favorite.FavoriteViewModel
 import com.example.musicapplication.ui.library.recent.RecentViewModel
 
 class LibraryFragment : Fragment() {
     private lateinit var binding: FragmentLibraryBinding
     private val libraryViewModel: LibraryViewModel by viewModels {
         val application = requireActivity().application as MusicApplication
-        LibraryViewModel.Factory(application.getRecentSongRepository())
+        LibraryViewModel.Factory(
+            application.getRecentSongRepository(),
+            application.getSongRepository()
+        )
     }
     private val recentSongViewModel: RecentViewModel by activityViewModels()
+    private val favoriteViewModel: FavoriteViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +41,9 @@ class LibraryFragment : Fragment() {
     private fun observeData() {
         libraryViewModel.recentSongs.observe(viewLifecycleOwner) { recentSongs ->
             recentSongViewModel.setRecentSongs(recentSongs)
+        }
+        libraryViewModel.favoriteSongs.observe(viewLifecycleOwner) { favoriteSongs ->
+            favoriteViewModel.setSongs(favoriteSongs)
         }
     }
 }

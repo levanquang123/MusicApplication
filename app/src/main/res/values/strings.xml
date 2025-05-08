@@ -56,4 +56,7 @@
     <string name="permission_denied">This application cannot play music if you  dont alow it use post  nofitication permisstion</string>
     <string name="action_agree">Agree</string>
     <string name="title_recent">Recent heard</string>
+    <string name="title_favorite">Favorite songs</string>
+    <string name="text_number_of_songs">Number_of_songs: %d</string>
+    <string name="text_album_name">Album name</string>
 </resources>

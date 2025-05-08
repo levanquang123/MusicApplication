@@ -27,4 +27,5 @@
     <dimen name="height_64">64dp</dimen>
     <dimen name="width_32">32dp</dimen>
     <dimen name="height_32">32dp</dimen>
+    <dimen name="height_48">48dp</dimen>
 </resources>

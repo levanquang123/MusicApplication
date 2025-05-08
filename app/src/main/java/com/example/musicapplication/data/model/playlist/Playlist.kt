@@ -33,7 +33,7 @@ data class Playlist(
     var id: Int
         get() = _id
         set(value) {
-            _id = if (id > 0) {
+            _id = if (value > 0) {
                 id
             } else {
                 autoId++

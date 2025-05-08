@@ -10,9 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentDetailAlbumBinding
+import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.SongAdapter
+import com.example.musicapplication.ui.viewmodel.SharedViewModel
 
-class DetailAlbumFragment : Fragment() {
+class DetailAlbumFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentDetailAlbumBinding
     private lateinit var adapter: SongAdapter
     private val detailAlbumViewModel: DetailAlbumViewModel by activityViewModels()
@@ -39,12 +41,15 @@ class DetailAlbumFragment : Fragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    // todo
+                    detailAlbumViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+                        SharedViewModel.instance.addPlaylist(playlist)
+                        playSong(song, index, playlist.name)
+                    }
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    // todo
+                    showOptionMenu(song)
                 }
             }
         )

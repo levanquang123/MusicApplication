@@ -103,12 +103,17 @@ class SharedViewModel private constructor(
         _playlists[playlistName] = playlist
     }
 
+    fun addPlaylist(playlist: Playlist) {
+        updatePlaylist(playlist)
+    }
+
     fun setPlayingSong(index: Int) {
-        val currentPlaylistSize = _playingSong.playlist?.songs?.size
+        val currentPlaylistSize = currentPlaylist.value?.songs?.size
         if (index >= 0 && currentPlaylistSize != null && currentPlaylistSize > index) {
-            val song = _playingSong.playlist?.songs?.get(index)!!
+            val song = currentPlaylist.value?.songs?.get(index)!!
             _playingSong.song = song
             _playingSong.currentIndex = index
+            _playingSong.playlist = currentPlaylist.value
             updatePlayingSong()
         }
     }
@@ -120,7 +125,6 @@ class SharedViewModel private constructor(
     fun setCurrentPlaylist(playlistName: String) {
         val playlist = _playlists.getOrDefault(playlistName, null)
         playlist?.let {
-            _playingSong.playlist = it
             _currentPlaylist.value = it
         }
     }
@@ -152,7 +156,7 @@ class SharedViewModel private constructor(
     }
 
     companion object {
-        private var _instance : SharedViewModel? = null
+        private var _instance: SharedViewModel? = null
         val instance: SharedViewModel
             get() = _instance!!
     }

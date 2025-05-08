@@ -13,6 +13,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,22 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         readIncomingIntent()
         setupMediaController()
         setupAnimator()
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                rotationAnimator.pause()
+                val intent = Intent().apply {
+                    putExtra(
+                        MusicAppUtils.EXTRA_CURRENT_FRACTION,
+                        rotationAnimator.animatedFraction
+                    )
+                }
+                setResult(RESULT_OK, intent)
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onPause() {
@@ -63,9 +80,11 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun readIncomingIntent() {
         currentFraction = intent.getFloatExtra(MusicAppUtils.EXTRA_CURRENT_FRACTION, 0f)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         seekBarHandler.removeCallbacks(seekbarCallback)
@@ -283,7 +302,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showRepeatMode() {
         mediaController?.let {
-            val iconId = when(it.repeatMode) {
+            val iconId = when (it.repeatMode) {
                 Player.REPEAT_MODE_OFF -> R.drawable.ic_repeat_off
                 Player.REPEAT_MODE_ALL -> R.drawable.ic_repeat_all
                 Player.REPEAT_MODE_ONE -> R.drawable.ic_repeat_one
@@ -293,6 +312,7 @@ class NowPlayingActivity : AppCompatActivity(), View.OnClickListener {
         }
 
     }
+
     private fun setupMediaListener() {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {

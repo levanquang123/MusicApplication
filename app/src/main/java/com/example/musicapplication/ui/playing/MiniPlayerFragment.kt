@@ -19,6 +19,7 @@ import androidx.media3.session.MediaController
 import com.bumptech.glide.Glide
 import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentMiniPlayerBinding
 import com.example.musicapplication.ui.viewmodel.MediaPlayerViewModel
@@ -168,10 +169,22 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
                 it.setMediaItems(mediaItems)
             }
             sharedViewModel.indexToPlay.observe(viewLifecycleOwner) { index ->
-                if (index > -1 && it.mediaItemCount > index) {
+                val playingSong = sharedViewModel.playingSong.value
+                var currentPlaylist: Playlist? = null
+                if (playingSong != null) {
+                    currentPlaylist = playingSong.playlist
+                }
+                val playlistToPlay = sharedViewModel.currentPlaylist.value
+                // TH1: cùng playlist, cùng index -> KHÔNG phát lại bài hát mà tiếp tục
+                // TH2: khác playlist, cùng index -> phát bài hát từ đầu
+                val condition1 = it.mediaItemCount > index && it.currentMediaItemIndex != index
+                val condition2 = playlistToPlay != null && it.currentMediaItemIndex == index
+                        && playlistToPlay.id != currentPlaylist?.id
+
+                if (index > -1 && (condition1 || condition2)) {
                     it.seekTo(index, 0)
                     it.prepare()
-                    it.play()
+//                    it.play()
                 }
             }
         }
@@ -183,8 +196,16 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
                 showSongInfo(song)
             }
         }
-        sharedViewModel.currentPlaylist.observe(viewLifecycleOwner) {
-            viewModel.setMediaItem(it.mediaItems)
+        sharedViewModel.currentPlaylist.observe(viewLifecycleOwner) { playlist ->
+            val playingSong = sharedViewModel.playingSong.value
+            var currentPlaylist: Playlist? = null
+            if (playingSong != null) {
+                currentPlaylist = playingSong.playlist
+            }
+            if(playlist.mediaItems.isNotEmpty()
+                && (currentPlaylist == null || currentPlaylist.id != playlist.id)) {
+                viewModel.setMediaItem(playlist.mediaItems)
+            }
         }
         sharedViewModel.indexToPlay.observe(viewLifecycleOwner) { index ->
             if (index > -1 && mediaController != null && mediaController!!.mediaItemCount > index) {

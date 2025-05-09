@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentRecentBinding
+import com.example.musicapplication.ui.detail.DetailFragment
+import com.example.musicapplication.ui.detail.DetailViewModel
 import com.example.musicapplication.utils.MusicAppUtils
 
 class RecentFragment : Fragment() {
     private lateinit var binding: FragmentRecentBinding
     private lateinit var adapter: RecentSongAdapter
     private val recentViewModel: RecentViewModel by activityViewModels()
+    private val detailViewModel: DetailViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,11 +59,19 @@ class RecentFragment : Fragment() {
         binding.rvRecent.adapter = adapter
         binding.rvRecent.layoutManager = layoutManager
         binding.progressRecentHeard.visibility = View.VISIBLE
+        binding.textTitleRecent.setOnClickListener {
+            navigateToDetailScreen()
+        }
+        binding.btnMoreRecent.setOnClickListener {
+            navigateToDetailScreen()
+        }
     }
 
     private fun observeData() {
         recentViewModel.recentSongs.observe(viewLifecycleOwner) { songs ->
             adapter.updateSongs(songs)
+            detailViewModel.setSongs(songs)
+            detailViewModel.setSongs(songs)
             binding.progressRecentHeard.visibility = View.GONE
         }
     }
@@ -76,5 +87,17 @@ class RecentFragment : Fragment() {
             lp.width = width - deltaX
             return true
         }
+    }
+
+    private fun navigateToDetailScreen() {
+        val playlistName = "recent"
+        val screenName = getString(R.string.title_recent)
+        detailViewModel.setScreenName(screenName)
+        detailViewModel.setPlaylistName(playlistName)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
     }
 }

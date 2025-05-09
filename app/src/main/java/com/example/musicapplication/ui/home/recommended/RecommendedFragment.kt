@@ -9,11 +9,14 @@ import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentRecommendedBinding
 import com.example.musicapplication.ui.PlayerBaseFragment
+import com.example.musicapplication.ui.detail.DetailFragment
+import com.example.musicapplication.ui.detail.DetailViewModel
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedFragment
 import com.example.musicapplication.ui.home.recommended.more.MoreRecommendedViewModel
 import com.example.musicapplication.ui.playing.MiniPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
 import com.example.musicapplication.utils.MusicAppUtils
+import kotlin.getValue
 
 class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecommendedBinding
@@ -21,6 +24,7 @@ class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var adapter: SongAdapter
     private val moreRecommendedViewModel: MoreRecommendedViewModel by activityViewModels()
     private val miniPlayerViewModel: MiniPlayerViewModel by activityViewModels()
+    private val detailViewModel: DetailViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,10 +56,29 @@ class RecommendedFragment : PlayerBaseFragment() {
         binding.includeSongList.rvSongList.adapter = adapter
         binding.btnMoreRecommended.setOnClickListener { navigateToMoreRecommended() }
         binding.textTitleRecommended.setOnClickListener { navigateToMoreRecommended() }
+        binding.btnMoreRecommended.setOnClickListener {
+            navigateToDetailScreen()
+        }
+        binding.textTitleRecommended.setOnClickListener {
+            navigateToDetailScreen()
+        }
+    }
+
+    private fun navigateToDetailScreen() {
+        val playlistName = "recommended"
+        val screenName = getString(R.string.title_recommended)
+        detailViewModel.setScreenName(screenName)
+        detailViewModel.setPlaylistName(playlistName)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupViewModel() {
         recommendedViewModel.songs.observe(viewLifecycleOwner) { songs ->
+            detailViewModel.setSongs(songs)
             adapter.updateSongs(songs.subList(0, 16))
             moreRecommendedViewModel.setRecommendedSongs(songs)
             val playlistName = MusicAppUtils.DefaultPlaylistName.RECOMMENDED.value

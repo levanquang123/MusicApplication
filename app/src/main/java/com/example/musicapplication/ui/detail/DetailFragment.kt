@@ -1,5 +1,6 @@
-package com.example.musicapplication.ui.library.favorite
+package com.example.musicapplication.ui.detail
 
+import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,24 +9,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
-import com.example.musicapplication.databinding.FragmentFavoriteBinding
-import com.example.musicapplication.ui.detail.DetailFragment
-import com.example.musicapplication.ui.detail.DetailViewModel
+import com.example.musicapplication.databinding.FragmentDetailBinding
 import com.example.musicapplication.ui.home.recommended.SongAdapter
-import kotlin.getValue
 
-class FavoriteFragment : Fragment() {
-    private lateinit var binding: FragmentFavoriteBinding
+class DetailFragment : Fragment() {
+    private lateinit var binding: FragmentDetailBinding
     private lateinit var adapter: SongAdapter
-    private val favoriteViewModel: FavoriteViewModel by activityViewModels()
     private val detailViewModel: DetailViewModel by activityViewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,6 +32,9 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun setupView() {
+        binding.toolbarDetailSongList.setNavigationOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
@@ -48,30 +47,18 @@ class FavoriteFragment : Fragment() {
                 }
             }
         )
-        binding.includeFavorite.rvSongList.adapter = adapter
-        binding.textTitleFavorite.setOnClickListener {
-            navigateToDetailScreen()
-        }
-        binding.btnMoreFavorite.setOnClickListener {
-            navigateToDetailScreen()
-        }
+        binding.includeSongList.rvSongList.adapter = adapter
     }
 
     private fun observeData() {
-        favoriteViewModel.songs.observe(viewLifecycleOwner) { songs ->
+        detailViewModel.songs.observe(viewLifecycleOwner) { songs ->
             adapter.updateSongs(songs)
         }
-    }
-
-    private fun navigateToDetailScreen() {
-        val playlistName = "favorite"
-        val screenName = getString(R.string.title_favorite)
-        detailViewModel.setScreenName(screenName)
-        detailViewModel.setPlaylistName(playlistName)
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
-            .addToBackStack(null)
-            .commit()
+        detailViewModel.screenName.observe(viewLifecycleOwner) { screenName ->
+            binding.textTitleDetailSongList.text = screenName
+        }
+        detailViewModel.playlistName.observe(viewLifecycleOwner) { playlistName ->
+            // todo
+        }
     }
 }

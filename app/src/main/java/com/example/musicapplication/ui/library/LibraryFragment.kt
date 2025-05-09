@@ -23,9 +23,13 @@ class LibraryFragment : Fragment() {
             application.getPlaylistRepository()
         )
     }
+
     private val recentSongViewModel: RecentViewModel by activityViewModels()
     private val favoriteViewModel: FavoriteViewModel by activityViewModels()
-    private val playlistViewModel: PlaylistViewModel by activityViewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels  {
+        val application = requireActivity().application as MusicApplication
+        PlaylistViewModel.Factory(application.getPlaylistRepository())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

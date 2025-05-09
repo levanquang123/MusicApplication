@@ -7,14 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.databinding.FragmentPlaylistBinding
+import com.example.musicapplication.ui.library.playlist.creation.DialogPlaylistCreationFragment
 
 class PlaylistFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistBinding
     private lateinit var adapter: PlaylistAdapter
-    private val playlistViewModel: PlaylistViewModel by activityViewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels {
+        val application = requireActivity().application as MusicApplication
+        PlaylistViewModel.Factory(application.getPlaylistRepository())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +48,24 @@ class PlaylistFragment : Fragment() {
             }
         )
         binding.rvPlaylist.adapter = adapter
+        binding.includeButtonCreatePlaylist.btnItemCreatePlaylist.setOnClickListener {
+            showDialogToCreatePlaylist()
+        }
+        binding.includeButtonCreatePlaylist.textItemCreatePlaylist.setOnClickListener {
+            showDialogToCreatePlaylist()
+        }
     }
+    private fun showDialogToCreatePlaylist() {
+        val listener = object : DialogPlaylistCreationFragment.OnClickListener {
+            override fun onClick(playlistName: String) {
+                playlistViewModel.createNewPlaylist(playlistName)
+            }
+        }
+        val dialog = DialogPlaylistCreationFragment(listener)
+        val tag = DialogPlaylistCreationFragment.TAG
+        dialog.show(requireActivity().supportFragmentManager, tag)
+    }
+
 
     private fun observeData() {
         playlistViewModel.playlists.observe(viewLifecycleOwner) { playlists ->

@@ -88,7 +88,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_8"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/include_empty_item_playlist_detail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_title_song_list" />
+        <include
+            android:id="@+id/include_empty_item_playlist_detail"
+            layout="@layout/partial_item_empty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

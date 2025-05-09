@@ -25,7 +25,7 @@ class DetailAlbumViewModel : ViewModel() {
     fun extractSongs(album: Album, songs: List<Song>?) {
         songs?.let {
             val currentPlaylist = Playlist(name = album.name)
-            currentPlaylist.id = -1
+            currentPlaylist._id = -1
             val songsList = mutableListOf<Song>()
             for (songId in album.songs) {
                 val songIndex = songs.indexOfFirst { it.id == songId }

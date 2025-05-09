@@ -7,13 +7,12 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.example.musicapplication.data.model.song.Song
 import java.util.Date
-import kotlin.collections.forEach
 
 @Entity(tableName = "playlists")
 data class Playlist(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "playlist_id")
-    private var _id: Int = 10001,
+    var _id: Int = 0, // Để Room tự tạo ID, hoặc gán thủ công khi cần
 
     @ColumnInfo(name = "name")
     var name: String = "",
@@ -30,15 +29,11 @@ data class Playlist(
     @Ignore
     var songs: List<Song> = listOf()
 
-    var id: Int
-        get() = _id
-        set(value) {
-            _id = if (value > 0) {
-                id
-            } else {
-                autoId++
-            }
+    init {
+        if (_id == 0) { // Chỉ gán nếu Room chưa tạo ID
+            _id = autoId++
         }
+    }
 
     val mediaItems: List<MediaItem>
         get() = _mediaItems
@@ -58,9 +53,7 @@ data class Playlist(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Playlist) return false
-
         if (_id != other._id) return false
-
         return true
     }
 

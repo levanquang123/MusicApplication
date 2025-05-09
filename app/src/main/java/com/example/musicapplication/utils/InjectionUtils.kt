@@ -1,10 +1,13 @@
 package com.example.musicapplication.utils
 
 import android.content.Context
+import com.example.musicapplication.data.repository.playlist.PlaylistRepositoryImpl
 import com.example.musicapplication.data.repository.recent.RecentSongRepositoryImpl
 import com.example.musicapplication.data.repository.song.SongRepositoryImpl
+import com.example.musicapplication.data.source.PlaylistDataSource
 import com.example.musicapplication.data.source.SongDataSource
 import com.example.musicapplication.data.source.local.AppDatabase
+import com.example.musicapplication.data.source.local.playlist.LocalPlaylistDataSource
 import com.example.musicapplication.data.source.local.recent.LocalRecentSongDataSource
 import com.example.musicapplication.data.source.local.song.LocalSongDataSource
 
@@ -33,5 +36,15 @@ object InjectionUtils {
         dataSource: SongDataSource.Local
     ): SongRepositoryImpl {
         return SongRepositoryImpl(dataSource)
+    }
+
+    fun providePlaylistDataSource(context: Context):
+            PlaylistDataSource.Local {
+        val database = AppDatabase.getInstance(context)
+        return LocalPlaylistDataSource(database.playlistDao())
+    }
+
+    fun providePlaylistRepository(dataSource: PlaylistDataSource.Local): PlaylistRepositoryImpl {
+        return PlaylistRepositoryImpl(dataSource)
     }
 }

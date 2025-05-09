@@ -13,6 +13,9 @@ interface PlaylistDao {
     @get:Query("SELECT * FROM playlists LIMIT 10")
     val playlists: Flow<List<Playlist>>
 
+    @Query("SELECT * FROM playlists WHERE name = :name")
+    suspend fun findPlaylistByName(name: String): Playlist?
+
     @Insert
     suspend fun insert(playlist: Playlist)
 

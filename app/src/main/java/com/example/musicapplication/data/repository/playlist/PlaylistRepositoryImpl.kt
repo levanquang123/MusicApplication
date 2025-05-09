@@ -10,6 +10,10 @@ class PlaylistRepositoryImpl(
     override val playlists: Flow<List<Playlist>>
         get() = localDataSource.playlists
 
+    override suspend fun findPlaylistByName(name: String): Playlist? {
+        return localDataSource.findPlaylistByName(name)
+    }
+
     override suspend fun createPlaylist(playlist: Playlist) {
         localDataSource.createPlaylist(playlist)
     }

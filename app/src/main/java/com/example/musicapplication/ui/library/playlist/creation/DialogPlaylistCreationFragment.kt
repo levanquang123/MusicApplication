@@ -9,13 +9,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
+import com.example.musicapplication.ui.library.playlist.PlaylistViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 class DialogPlaylistCreationFragment(
-    private val listener: OnClickListener
+    private val listener: OnClickListener,
+    private val textChangeListener: OnTextChangeListener
 ) : DialogFragment() {
+    private val playlistViewModel: PlaylistViewModel by activityViewModels {
+        val application = requireActivity().application as MusicApplication
+        PlaylistViewModel.Factory(application.getPlaylistRepository())
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
@@ -25,30 +34,60 @@ class DialogPlaylistCreationFragment(
         builder.setView(rootView)
             .setTitle(getString(R.string.title_create_playlist))
             .setPositiveButton(getString(R.string.action_create)) { _, _ ->
-                if (editPlaylistName != null && editPlaylistName.text != null) {
-                    val playlistName = editPlaylistName.text.toString().trim()
-                    if (playlistName.isNotEmpty()) {
-                        listener.onClick(playlistName)
-                    } else {
-                        val message = getString(R.string.error_empty_playlist_name)
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                    }
-                }
+                setupPositiveButton(editPlaylistName)
             }
             .setNegativeButton(getString(R.string.action_cancel)) { _, _ ->
                 dismiss()
             }
+        setupEditTextListener(editPlaylistName)
+        playlistViewModel.findPlaylistByName("")
+        observeData(editPlaylistName)
+        return builder.create()
+    }
+
+    private fun setupPositiveButton(editPlaylistName: TextInputEditText) {
+        if (editPlaylistName.text != null) {
+            val playlistName = editPlaylistName.text.toString().trim()
+            if (playlistName.isNotEmpty()) {
+                if (editPlaylistName.error == null) {
+                    listener.onClick(playlistName)
+                }
+            } else {
+                val message = getString(R.string.error_empty_playlist_name)
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setupEditTextListener(editPlaylistName: TextInputEditText) {
         editPlaylistName.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 requireActivity().window
                     .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             }
         }
-        return builder.create()
+        editPlaylistName.doOnTextChanged { text, _, _, _ ->
+            textChangeListener.onTextChange(text.toString())
+        }
+    }
+
+    private fun observeData(editPlaylistName: TextInputEditText) {
+        playlistViewModel.playlist.observe(requireActivity()) { playlist ->
+            if (playlist != null) {
+                val message = editPlaylistName.context.getString(R.string.error_playlist_exists)
+                editPlaylistName.error = message
+            } else {
+                editPlaylistName.error = null
+            }
+        }
     }
 
     interface OnClickListener {
         fun onClick(playlistName: String)
+    }
+
+    interface OnTextChangeListener {
+        fun onTextChange(playlistName: String)
     }
 
     companion object {

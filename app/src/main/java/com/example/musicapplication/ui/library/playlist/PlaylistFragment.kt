@@ -61,7 +61,12 @@ class PlaylistFragment : Fragment() {
                 playlistViewModel.createNewPlaylist(playlistName)
             }
         }
-        val dialog = DialogPlaylistCreationFragment(listener)
+        val textChangeListener = object : DialogPlaylistCreationFragment.OnTextChangeListener {
+            override fun onTextChange(playlistName: String) {
+                playlistViewModel.findPlaylistByName(playlistName)
+            }
+        }
+        val dialog = DialogPlaylistCreationFragment(listener, textChangeListener)
         val tag = DialogPlaylistCreationFragment.TAG
         dialog.show(requireActivity().supportFragmentManager, tag)
     }
@@ -72,4 +77,6 @@ class PlaylistFragment : Fragment() {
             adapter.updatePlaylists(playlists)
         }
     }
+
+
 }

@@ -14,9 +14,14 @@ import java.util.Date
 class PlaylistViewModel(
     private val playlistRepository: PlaylistRepositoryImpl
 ) : ViewModel() {
+    private val _playlist = MutableLiveData<Playlist?>()
     private val _playlists = MutableLiveData<List<Playlist>>()
+
     val playlists: LiveData<List<Playlist>>
         get() = _playlists
+
+    val playlist: LiveData<Playlist?>
+        get() = _playlist
 
     fun setPlaylists(playlists: List<Playlist>) {
         _playlists.value = playlists
@@ -26,6 +31,12 @@ class PlaylistViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val playlist = Playlist(_id = 0, name = playlistName, createdAt = Date())
             playlistRepository.createPlaylist(playlist)
+        }
+    }
+    fun findPlaylistByName(playlistName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = playlistRepository.findPlaylistByName(playlistName)
+            _playlist.postValue(result)
         }
     }
 

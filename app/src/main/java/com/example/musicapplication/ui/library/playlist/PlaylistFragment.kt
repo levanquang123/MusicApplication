@@ -1,6 +1,5 @@
 package com.example.musicapplication.ui.library.playlist
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +15,7 @@ import com.example.musicapplication.ui.library.playlist.detail.PlaylistDetailFra
 import com.example.musicapplication.ui.library.playlist.detail.PlaylistDetailViewModel
 import com.example.musicapplication.ui.library.playlist.more.MorePlaylistFragment
 import com.example.musicapplication.ui.library.playlist.more.MorePlaylistViewModel
+import com.example.musicapplication.ui.viewmodel.SharedViewModel
 
 class PlaylistFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistBinding
@@ -46,6 +46,7 @@ class PlaylistFragment : Fragment() {
         adapter = PlaylistAdapter(
             object : PlaylistAdapter.OnPlaylistClickListener {
                 override fun onPlaylistClick(playlist: Playlist) {
+                    SharedViewModel.instance.addPlaylist(playlist)
                     playlistViewModel.getPlaylistWithSongByPlaylistId(playlist._id)
                     shouldNavigateToDetail = true
                 }
@@ -110,7 +111,11 @@ class PlaylistFragment : Fragment() {
             morePlaylistViewModel.setPlaylists(it)
         }
         playlistViewModel.playlistWithSongs.observe(viewLifecycleOwner) { playlistWithSongs ->
-            if(shouldNavigateToDetail) {
+            if (shouldNavigateToDetail) {
+                playlistWithSongs.playlist?.let {
+                    it.updateSongList(playlistWithSongs.songs)
+                    SharedViewModel.instance.addPlaylist(it)
+                }
                 playlistDetailViewModel.setPlaylistWithSongs(playlistWithSongs)
                 navigateToPlaylistDetail()
                 shouldNavigateToDetail = false

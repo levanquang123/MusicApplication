@@ -1,7 +1,6 @@
 package com.example.musicapplication.ui.library.favorite
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +8,14 @@ import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentFavoriteBinding
+import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.detail.DetailFragment
 import com.example.musicapplication.ui.detail.DetailViewModel
 import com.example.musicapplication.ui.home.recommended.SongAdapter
 import kotlin.getValue
+import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName.FAVORITES
 
-class FavoriteFragment : Fragment() {
+class FavoriteFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var adapter: SongAdapter
     private val favoriteViewModel: FavoriteViewModel by activityViewModels()
@@ -39,12 +40,12 @@ class FavoriteFragment : Fragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    // todo
+                    playSong(song, index, FAVORITES.value)
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    // todo
+                    showOptionMenu(song)
                 }
             }
         )
@@ -60,11 +61,12 @@ class FavoriteFragment : Fragment() {
     private fun observeData() {
         favoriteViewModel.songs.observe(viewLifecycleOwner) { songs ->
             adapter.updateSongs(songs)
+            detailViewModel.setSongs(songs)
         }
     }
 
     private fun navigateToDetailScreen() {
-        val playlistName = "favorite"
+        val playlistName = FAVORITES.value
         val screenName = getString(R.string.title_favorite)
         detailViewModel.setScreenName(screenName)
         detailViewModel.setPlaylistName(playlistName)

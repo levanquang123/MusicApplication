@@ -1,9 +1,7 @@
 package com.example.musicapplication.ui.library.recent
 
 import android.content.Context
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentRecentBinding
+import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.detail.DetailFragment
 import com.example.musicapplication.ui.detail.DetailViewModel
 import com.example.musicapplication.utils.MusicAppUtils
+import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName.RECENT
 
-class RecentFragment : Fragment() {
+class RecentFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecentBinding
     private lateinit var adapter: RecentSongAdapter
     private val recentViewModel: RecentViewModel by activityViewModels()
@@ -41,12 +41,12 @@ class RecentFragment : Fragment() {
         adapter = RecentSongAdapter(
             object : RecentSongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    // todo
+                    playSong(song, index, RECENT.value)
                 }
             },
             object : RecentSongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    // todo
+                    showOptionMenu(song)
                 }
             }
         )
@@ -90,7 +90,7 @@ class RecentFragment : Fragment() {
     }
 
     private fun navigateToDetailScreen() {
-        val playlistName = "recent"
+        val playlistName = RECENT.value
         val screenName = getString(R.string.title_recent)
         detailViewModel.setScreenName(screenName)
         detailViewModel.setPlaylistName(playlistName)

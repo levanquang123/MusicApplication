@@ -17,6 +17,7 @@ import com.example.musicapplication.ui.playing.MiniPlayerViewModel
 import com.example.musicapplication.ui.viewmodel.SharedViewModel
 import com.example.musicapplication.utils.MusicAppUtils
 import kotlin.getValue
+import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName.RECOMMENDED
 
 class RecommendedFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecommendedBinding
@@ -65,7 +66,7 @@ class RecommendedFragment : PlayerBaseFragment() {
     }
 
     private fun navigateToDetailScreen() {
-        val playlistName = "recommended"
+        val playlistName = RECOMMENDED.value
         val screenName = getString(R.string.title_recommended)
         detailViewModel.setScreenName(screenName)
         detailViewModel.setPlaylistName(playlistName)

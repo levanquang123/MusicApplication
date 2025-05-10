@@ -10,9 +10,10 @@ import androidx.fragment.app.activityViewModels
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.FragmentDetailBinding
+import com.example.musicapplication.ui.PlayerBaseFragment
 import com.example.musicapplication.ui.home.recommended.SongAdapter
 
-class DetailFragment : Fragment() {
+class DetailFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentDetailBinding
     private lateinit var adapter: SongAdapter
     private val detailViewModel: DetailViewModel by activityViewModels()
@@ -38,12 +39,13 @@ class DetailFragment : Fragment() {
         adapter = SongAdapter(
             object : SongAdapter.OnSongClickListener {
                 override fun onClick(song: Song, index: Int) {
-                    // todo
+                    val playlistName = detailViewModel.playlistName.value ?: ""
+                    playSong(song, index, playlistName)
                 }
             },
             object : SongAdapter.OnSongOptionMenuClickListener {
                 override fun onClick(song: Song) {
-                    // todo
+                    showOptionMenu(song)
                 }
             }
         )
@@ -57,8 +59,6 @@ class DetailFragment : Fragment() {
         detailViewModel.screenName.observe(viewLifecycleOwner) { screenName ->
             binding.textTitleDetailSongList.text = screenName
         }
-        detailViewModel.playlistName.observe(viewLifecycleOwner) { playlistName ->
-            // todo
-        }
+
     }
 }

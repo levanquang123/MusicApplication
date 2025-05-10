@@ -13,7 +13,7 @@ import com.example.musicapplication.ui.home.album.AlbumHotViewModel
 import com.example.musicapplication.ui.home.recommended.RecommendedViewModel
 
 class HomeFragment : Fragment() {
-    private lateinit var _binding: FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
     private val homeViewModel: HomeViewModel by activityViewModels {
         val application = requireActivity().application as MusicApplication
         HomeViewModel.Factory(application.getSongRepository())
@@ -27,8 +27,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return _binding.root
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,6 +37,18 @@ class HomeFragment : Fragment() {
             setupObserver()
             isObserved = true
         }
+        if(savedInstanceState != null) {
+            val scrollPosition = savedInstanceState.getInt(SCROLL_POSITION)
+            binding.scrollViewHome.post {
+                binding.scrollViewHome.scrollTo(0, scrollPosition)
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val scrollPosition = binding.scrollViewHome.scrollY
+        outState.putInt(SCROLL_POSITION, scrollPosition)
     }
 
     private fun setupObserver() {
@@ -55,5 +67,9 @@ class HomeFragment : Fragment() {
                 songViewModel.setSongs(it)
             }
         }
+    }
+
+    companion object {
+        const val SCROLL_POSITION = "com.example.musicapplication.ui.home.SCROLL_POSITION"
     }
 }

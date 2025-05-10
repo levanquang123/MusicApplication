@@ -8,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
+import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.DialogFragmentSongOptionMenuBinding
 import com.example.musicapplication.databinding.ItemOptionMenuBinding
@@ -75,7 +76,15 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun addToPlaylist() {
-        // todo
+        val tag = DialogAddSongToPlaylistFragment.TAG
+        val dialog = DialogAddSongToPlaylistFragment(
+            object : DialogAddSongToPlaylistFragment.OnPlaylistSelectedListener {
+                override fun onPlaylistSelected(playlist: Playlist) {
+                    // todo
+                }
+            }
+        )
+        dialog.show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun addToQueue() {

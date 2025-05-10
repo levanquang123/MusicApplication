@@ -8,9 +8,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.model.playlist.PlaylistSongCrossRef
+import com.example.musicapplication.data.model.playlist.PlaylistWithSongs
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.repository.playlist.PlaylistRepositoryImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -19,6 +21,7 @@ class PlaylistViewModel(
 ) : ViewModel() {
     private val _playlist = MutableLiveData<Playlist?>()
     private val _addResult = MutableLiveData<Boolean>()
+    private val _playlistWithSongs = MutableLiveData<PlaylistWithSongs>()
 
     val playlists = playlistRepository.getAllPlaylistsWithSongs().asLiveData()
     val addResult: LiveData<Boolean>
@@ -26,6 +29,9 @@ class PlaylistViewModel(
 
     val playlist: LiveData<Playlist?>
         get() = _playlist
+
+    val playlistWithSongs: LiveData<PlaylistWithSongs>
+        get() = _playlistWithSongs
 
     fun createNewPlaylist(playlistName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,7 +48,7 @@ class PlaylistViewModel(
     }
 
     fun createPlaylistSongCrossRef(playlist: Playlist, song: Song?) {
-        if(song != null) {
+        if (song != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 val playlistSongCrossRef = PlaylistSongCrossRef()
                 playlistSongCrossRef.playlistId = playlist._id
@@ -55,6 +61,14 @@ class PlaylistViewModel(
         }
     }
 
+    fun getPlaylistWithSongByPlaylistId(playlistId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = playlistRepository.getPlaylistsWithSongsByPlaylistId(playlistId)
+            result.collectLatest {
+                _playlistWithSongs.postValue(it)
+            }
+        }
+    }
     class Factory(
         private val playlistRepository: PlaylistRepositoryImpl
     ) : ViewModelProvider.Factory {

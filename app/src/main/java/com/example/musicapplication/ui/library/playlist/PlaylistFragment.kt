@@ -12,6 +12,8 @@ import com.example.musicapplication.R
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.databinding.FragmentPlaylistBinding
 import com.example.musicapplication.ui.library.playlist.creation.DialogPlaylistCreationFragment
+import com.example.musicapplication.ui.library.playlist.detail.PlaylistDetailFragment
+import com.example.musicapplication.ui.library.playlist.detail.PlaylistDetailViewModel
 import com.example.musicapplication.ui.library.playlist.more.MorePlaylistFragment
 import com.example.musicapplication.ui.library.playlist.more.MorePlaylistViewModel
 
@@ -19,10 +21,12 @@ class PlaylistFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistBinding
     private lateinit var adapter: PlaylistAdapter
     private val morePlaylistViewModel: MorePlaylistViewModel by activityViewModels()
+    private val playlistDetailViewModel: PlaylistDetailViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels {
         val application = requireActivity().application as MusicApplication
         PlaylistViewModel.Factory(application.getPlaylistRepository())
     }
+    private var shouldNavigateToDetail = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +46,8 @@ class PlaylistFragment : Fragment() {
         adapter = PlaylistAdapter(
             object : PlaylistAdapter.OnPlaylistClickListener {
                 override fun onPlaylistClick(playlist: Playlist) {
-                    // todo
+                    playlistViewModel.getPlaylistWithSongByPlaylistId(playlist._id)
+                    shouldNavigateToDetail = true
                 }
 
                 override fun onPlaylistMenuOptionClick(playlist: Playlist) {
@@ -65,6 +70,14 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    private fun navigateToPlaylistDetail() {
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, PlaylistDetailFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun showDialogToCreatePlaylist() {
         val listener = object : DialogPlaylistCreationFragment.OnClickListener {
             override fun onClick(playlistName: String) {
@@ -81,7 +94,6 @@ class PlaylistFragment : Fragment() {
         dialog.show(requireActivity().supportFragmentManager, tag)
     }
 
-
     private fun navigateToMorePlaylist() {
         requireActivity().supportFragmentManager
             .beginTransaction()
@@ -96,6 +108,13 @@ class PlaylistFragment : Fragment() {
         }
         playlistViewModel.playlists.observe(viewLifecycleOwner) {
             morePlaylistViewModel.setPlaylists(it)
+        }
+        playlistViewModel.playlistWithSongs.observe(viewLifecycleOwner) { playlistWithSongs ->
+            if(shouldNavigateToDetail) {
+                playlistDetailViewModel.setPlaylistWithSongs(playlistWithSongs)
+                navigateToPlaylistDetail()
+                shouldNavigateToDetail = false
+            }
         }
     }
 }

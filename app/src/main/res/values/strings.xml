@@ -71,4 +71,5 @@
     <string name="error_playlist_exists">This playlist name already in used</string>
     <string name="add_to_playlist_success">The song has been added to playlist %s\"</string>
     <string name="add_to_playlist_failed">This song already exists in your selected playlist</string>
+    <string name="title_playlist_detail">Playlist Detail</string>
 </resources>

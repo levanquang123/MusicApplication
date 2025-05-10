@@ -6,12 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.playlist.Playlist
+import com.example.musicapplication.data.model.playlist.PlaylistWithSongs
 import com.example.musicapplication.databinding.ItemPlaylistBinding
 
 class PlaylistAdapter(
     private val listener: OnPlaylistClickListener
 ) : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
-    private val _playlists = mutableListOf<Playlist>()
+    private val _playlists = mutableListOf<PlaylistWithSongs>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -27,7 +28,7 @@ class PlaylistAdapter(
         holder.bind(_playlists[position])
     }
 
-    fun updatePlaylists(playlists: List<Playlist>) {
+    fun updatePlaylists(playlists: List<PlaylistWithSongs>) {
         val oldSize = _playlists.size
         _playlists.clear()
         _playlists.addAll(playlists)
@@ -41,24 +42,29 @@ class PlaylistAdapter(
         private val binding: ItemPlaylistBinding,
         private val listener: OnPlaylistClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(playlist: Playlist) {
-            binding.textItemPlaylistName.text = playlist.name
+        fun bind(playlistWithSongs: PlaylistWithSongs) {
+            binding.textItemPlaylistName.text = playlistWithSongs.playlist?.name
             val playlistSize = binding.root
                 .context
-                .getString(R.string.text_playlist_num_of_song, playlist.songs.size)
+                .getString(R.string.text_playlist_num_of_song, playlistWithSongs.songs.size)
             binding.textItemPlaylistSize.text = playlistSize
             Glide.with(binding.root)
-                .load(playlist.artwork)
+                .load(playlistWithSongs.playlist?.artwork)
                 .error(R.drawable.ic_album)
                 .into(binding.imagePlaylistAvatar)
             binding.root.setOnClickListener {
-                listener.onPlaylistClick(playlist)
+                playlistWithSongs.playlist?.let {
+                        playlist -> listener.onPlaylistClick(playlist)
+                }
             }
             binding.btnItemPlaylistOption.setOnClickListener {
-                listener.onPlaylistMenuOptionClick(playlist)
+                playlistWithSongs.playlist?.let {
+                    listener.onPlaylistMenuOptionClick(it)
+                }
             }
         }
     }
+
 
     interface OnPlaylistClickListener {
         fun onPlaylistClick(playlist: Playlist)

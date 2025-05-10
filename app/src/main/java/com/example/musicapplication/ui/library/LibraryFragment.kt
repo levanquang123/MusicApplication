@@ -52,8 +52,5 @@ class LibraryFragment : Fragment() {
         libraryViewModel.favoriteSongs.observe(viewLifecycleOwner) { favoriteSongs ->
             favoriteViewModel.setSongs(favoriteSongs)
         }
-        libraryViewModel.playlists.observe(viewLifecycleOwner) { playlist ->
-            playlistViewModel.setPlaylists(playlist)
-        }
     }
 }

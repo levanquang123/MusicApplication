@@ -1,6 +1,8 @@
 package com.example.musicapplication.data.repository.playlist
 
 import com.example.musicapplication.data.model.playlist.Playlist
+import com.example.musicapplication.data.model.playlist.PlaylistSongCrossRef
+import com.example.musicapplication.data.model.playlist.PlaylistWithSongs
 import com.example.musicapplication.data.source.PlaylistDataSource
 import kotlinx.coroutines.flow.Flow
 
@@ -10,6 +12,17 @@ class PlaylistRepositoryImpl(
     override val playlists: Flow<List<Playlist>>
         get() = localDataSource.playlists
 
+    override fun getAllPlaylistsWithSongs(): Flow<List<PlaylistWithSongs>> {
+        return localDataSource.getAllPlaylistsWithSongs()
+    }
+
+    override fun getPlaylistsWithSongsByPlaylistId(playlistId: Int): Flow<PlaylistWithSongs> {
+        return localDataSource.getPlaylistsWithSongsByPlaylistId(playlistId)
+    }
+
+    override suspend fun createPlaylistSongCrossRef(playlistSongCrossRef: PlaylistSongCrossRef): Long {
+        return localDataSource.insertPlaylistSongCrossRef(playlistSongCrossRef)
+    }
     override val allPlaylists: Flow<List<Playlist>>
         get() = localDataSource.allPlaylists
     override suspend fun findPlaylistByName(name: String): Playlist? {

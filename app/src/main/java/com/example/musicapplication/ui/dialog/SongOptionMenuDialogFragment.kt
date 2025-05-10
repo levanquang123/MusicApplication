@@ -4,14 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.R
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.databinding.DialogFragmentSongOptionMenuBinding
 import com.example.musicapplication.databinding.ItemOptionMenuBinding
+import com.example.musicapplication.ui.library.playlist.PlaylistViewModel
 import com.example.musicapplication.utils.OptionMenuUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -20,6 +23,11 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
     private lateinit var adapter: MenuItemAdapter
     private val viewModel: SongOptionMenuViewModel by activityViewModels()
     private val songInfoViewModel: DialogSongInfoViewModel by activityViewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels {
+        val application = requireActivity().application as MusicApplication
+        PlaylistViewModel.Factory(application.getPlaylistRepository())
+    }
+    private var isClicked = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,19 +54,21 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
         )
         binding.rvOptionMenu.adapter = adapter
     }
+
     private fun onMenuItemClick(item: MenuItem) {
-        when(item.option) {
+        when (item.option) {
             OptionMenuUtils.OptionMenu.DOWNLOAD -> downloadSong()
             OptionMenuUtils.OptionMenu.VIEW_SONG_INFORMATION -> showDetailSongInfo()
             OptionMenuUtils.OptionMenu.ADD_TO_FAVOURITES -> addToFavorite()
             OptionMenuUtils.OptionMenu.ADD_TO_PLAYLIST -> addToPlaylist()
             OptionMenuUtils.OptionMenu.ADD_TO_QUEUE -> addToQueue()
             OptionMenuUtils.OptionMenu.VIEW_ARTIST -> viewArtist()
-            OptionMenuUtils.OptionMenu.VIEW_ALBUM -> viewAlbum()
+            OptionMenuUtils.OptionMenu.VIEW_ALBUM -> viewAbum()
             OptionMenuUtils.OptionMenu.BLOCK -> block()
             OptionMenuUtils.OptionMenu.REPORT_ERROR -> report()
         }
     }
+
     private fun downloadSong() {
         // todo
     }
@@ -80,7 +90,10 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
         val dialog = DialogAddSongToPlaylistFragment(
             object : DialogAddSongToPlaylistFragment.OnPlaylistSelectedListener {
                 override fun onPlaylistSelected(playlist: Playlist) {
-                    // todo
+                    val song = viewModel.song.value
+                    viewModel.setPlaylistName(playlist.name)
+                    playlistViewModel.createPlaylistSongCrossRef(playlist, song)
+                    isClicked = true
                 }
             }
         )
@@ -95,7 +108,7 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
         // todo
     }
 
-    private fun viewAlbum() {
+    private fun viewAbum() {
         // todo
     }
 
@@ -106,12 +119,26 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
     private fun report() {
         // todo
     }
+
     private fun setupObserver() {
         viewModel.optionMenuItem.observe(viewLifecycleOwner) { items ->
             adapter.updateMenuItems(items)
         }
         viewModel.song.observe(viewLifecycleOwner) {
             showSongInfo(it)
+        }
+        playlistViewModel.addResult.observe(viewLifecycleOwner) { addResult ->
+            if (isClicked) {
+                val messageId = if (addResult) {
+                    R.string.add_to_playlist_success
+                } else {
+                    R.string.add_to_playlist_failed
+                }
+                val playlistName = viewModel.playlistName.value ?: ""
+                val message = requireActivity().getString(messageId, playlistName)
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                isClicked = false
+            }
         }
     }
 
@@ -120,7 +147,7 @@ class SongOptionMenuDialogFragment : BottomSheetDialogFragment() {
         binding.includeSongBottomSheet.textOptionItemSongArtist.text = song.artist
         Glide.with(requireContext())
             .load(song.image)
-            .error(R.drawable.ic_album_black)
+            .error(R.drawable.ic_album)
             .into(binding.includeSongBottomSheet.imageOptionSongArtwork)
     }
 

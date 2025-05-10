@@ -2,7 +2,10 @@ package com.example.musicapplication.ui.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -34,20 +37,23 @@ class DialogAddSongToPlaylistFragment(
         val btnCreate = rootView.findViewById<MaterialButton>(R.id.btn_create)
         val editPlaylistName = rootView.findViewById<TextInputEditText>(R.id.edit_playlist_name)
         btnCreate.setOnClickListener {
-            // todo
+            createPlaylist(editPlaylistName)
         }
         btnCancel.setOnClickListener {
             dismiss()
         }
         builder.setView(rootView)
         loadPlaylistList()
+        observePlaylistName(editPlaylistName)
+        viewModel.findPlaylistByName("")
         return builder.create()
     }
 
     private fun setupComponents() {
         adapter = PlaylistAdapter(object : PlaylistAdapter.OnPlaylistClickListener {
             override fun onPlaylistClick(playlist: Playlist) {
-                // todo
+                listener.onPlaylistSelected(playlist)
+                dismiss()
             }
 
             override fun onPlaylistMenuOptionClick(playlist: Playlist) {
@@ -56,9 +62,43 @@ class DialogAddSongToPlaylistFragment(
         })
     }
 
+    private fun createPlaylist(editPlaylistName: TextInputEditText) {
+        if (editPlaylistName.text != null) {
+            val newPlaylistName = editPlaylistName.text.toString().trim()
+            if (newPlaylistName.isEmpty()) {
+                editPlaylistName.error = getString(R.string.error_empty_playlist_name)
+            }
+            if (editPlaylistName.error == null) {
+                editPlaylistName.text!!.clear()
+                closeKeyboard(editPlaylistName)
+            }
+        }
+    }
+
+    private fun closeKeyboard(editPlaylistName: TextInputEditText) {
+        val inputMethodManager = requireActivity()
+            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(editPlaylistName.windowToken, 0)
+    }
+
     private fun loadPlaylistList() {
         viewModel.playlists.observe(requireActivity()) { playlists ->
             adapter.updatePlaylists(playlists)
+        }
+    }
+
+    private fun observePlaylistName(editPlaylistName: TextInputEditText) {
+        editPlaylistName.doOnTextChanged { text, _, _, _ ->
+            text?.let {
+                viewModel.findPlaylistByName(it.toString())
+            }
+        }
+        viewModel.playlist.observe(requireActivity()) { playlist ->
+            if (playlist == null) {
+                editPlaylistName.error = null
+            } else {
+                editPlaylistName.error = getString(R.string.error_playlist_exists)
+            }
         }
     }
 

@@ -94,7 +94,7 @@ class PlaylistFragment : Fragment() {
         playlistViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
             adapter.updatePlaylists(playlists)
         }
-        playlistViewModel.allPlaylists.observe(viewLifecycleOwner) {
+        playlistViewModel.playlists.observe(viewLifecycleOwner) {
             morePlaylistViewModel.setPlaylists(it)
         }
     }

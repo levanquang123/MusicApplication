@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.musicapplication.data.model.playlist.Playlist
+import com.example.musicapplication.data.model.playlist.PlaylistSongCrossRef
+import com.example.musicapplication.data.model.song.Song
 import com.example.musicapplication.data.repository.playlist.PlaylistRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,18 +18,14 @@ class PlaylistViewModel(
     private val playlistRepository: PlaylistRepositoryImpl
 ) : ViewModel() {
     private val _playlist = MutableLiveData<Playlist?>()
-    private val _playlists = MutableLiveData<List<Playlist>>()
-    val allPlaylists = playlistRepository.allPlaylists.asLiveData()
+    private val _addResult = MutableLiveData<Boolean>()
 
-    val playlists: LiveData<List<Playlist>>
-        get() = _playlists
+    val playlists = playlistRepository.getAllPlaylistsWithSongs().asLiveData()
+    val addResult: LiveData<Boolean>
+        get() = _addResult
 
     val playlist: LiveData<Playlist?>
         get() = _playlist
-
-    fun setPlaylists(playlists: List<Playlist>) {
-        _playlists.value = playlists
-    }
 
     fun createNewPlaylist(playlistName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,10 +33,25 @@ class PlaylistViewModel(
             playlistRepository.createPlaylist(playlist)
         }
     }
+
     fun findPlaylistByName(playlistName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = playlistRepository.findPlaylistByName(playlistName)
             _playlist.postValue(result)
+        }
+    }
+
+    fun createPlaylistSongCrossRef(playlist: Playlist, song: Song?) {
+        if(song != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val playlistSongCrossRef = PlaylistSongCrossRef()
+                playlistSongCrossRef.playlistId = playlist._id
+                playlistSongCrossRef.songId = song.id
+                val result = playlistRepository.createPlaylistSongCrossRef(playlistSongCrossRef)
+                _addResult.postValue(result != -1L)
+            }
+        } else {
+            _addResult.postValue(false)
         }
     }
 

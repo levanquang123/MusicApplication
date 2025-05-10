@@ -16,6 +16,9 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists WHERE name = :name")
     suspend fun findPlaylistByName(name: String): Playlist?
 
+    @get:Query("SELECT * FROM playlists")
+    val allPlaylists: Flow<List<Playlist>>
+
     @Insert
     suspend fun insert(playlist: Playlist)
 

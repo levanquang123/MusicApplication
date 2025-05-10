@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.musicapplication.data.model.playlist.Playlist
 import com.example.musicapplication.data.repository.playlist.PlaylistRepositoryImpl
@@ -16,6 +17,7 @@ class PlaylistViewModel(
 ) : ViewModel() {
     private val _playlist = MutableLiveData<Playlist?>()
     private val _playlists = MutableLiveData<List<Playlist>>()
+    val allPlaylists = playlistRepository.allPlaylists.asLiveData()
 
     val playlists: LiveData<List<Playlist>>
         get() = _playlists

@@ -10,6 +10,9 @@ class LocalPlaylistDataSource(
     override val playlists: Flow<List<Playlist>>
         get() = playlistDao.playlists
 
+    override val allPlaylists: Flow<List<Playlist>>
+        get() = playlistDao.allPlaylists
+
     override suspend fun findPlaylistByName(name: String): Playlist? {
         return playlistDao.findPlaylistByName(name)
     }

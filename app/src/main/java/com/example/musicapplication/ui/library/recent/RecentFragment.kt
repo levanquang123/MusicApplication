@@ -17,6 +17,7 @@ import com.example.musicapplication.ui.detail.DetailViewModel
 import com.example.musicapplication.utils.MusicAppUtils
 import com.example.musicapplication.utils.MusicAppUtils.DefaultPlaylistName.RECENT
 
+
 class RecentFragment : PlayerBaseFragment() {
     private lateinit var binding: FragmentRecentBinding
     private lateinit var adapter: RecentSongAdapter
@@ -67,10 +68,21 @@ class RecentFragment : PlayerBaseFragment() {
         }
     }
 
+    private fun navigateToDetailScreen() {
+        val playlistName = RECENT.value
+        val screenName = getString(R.string.title_recent)
+        detailViewModel.setScreenName(screenName)
+        detailViewModel.setPlaylistName(playlistName)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun observeData() {
         recentViewModel.recentSongs.observe(viewLifecycleOwner) { songs ->
             adapter.updateSongs(songs)
-            detailViewModel.setSongs(songs)
             detailViewModel.setSongs(songs)
             binding.progressRecentHeard.visibility = View.GONE
         }
@@ -87,17 +99,5 @@ class RecentFragment : PlayerBaseFragment() {
             lp.width = width - deltaX
             return true
         }
-    }
-
-    private fun navigateToDetailScreen() {
-        val playlistName = RECENT.value
-        val screenName = getString(R.string.title_recent)
-        detailViewModel.setScreenName(screenName)
-        detailViewModel.setPlaylistName(playlistName)
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
-            .addToBackStack(null)
-            .commit()
     }
 }

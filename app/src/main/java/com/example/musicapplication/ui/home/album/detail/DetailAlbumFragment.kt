@@ -1,7 +1,6 @@
 package com.example.musicapplication.ui.home.album.detail
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +62,7 @@ class DetailAlbumFragment : PlayerBaseFragment() {
             binding.includeAlbumDetail.textPlaylistDetailNumOfSong.text = text
             Glide.with(binding.root)
                 .load(album.artwork)
-                .error(R.drawable.ic_album_black)
+                .error(R.drawable.ic_album)
                 .into(binding.includeAlbumDetail.imagePlaylistArtwork)
         }
         detailAlbumViewModel.songs.observe(viewLifecycleOwner) { songs ->

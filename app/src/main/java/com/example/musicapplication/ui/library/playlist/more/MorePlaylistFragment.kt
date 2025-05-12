@@ -20,7 +20,6 @@ class MorePlaylistFragment : Fragment() {
     private lateinit var binding: FragmentMorePlaylistBinding
     private lateinit var adapter: PlaylistAdapter
     private val morePlaylistViewModel: MorePlaylistViewModel by activityViewModels()
-
     private val playlistDetailViewModel: PlaylistDetailViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels {
         val application = requireActivity().application as MusicApplication

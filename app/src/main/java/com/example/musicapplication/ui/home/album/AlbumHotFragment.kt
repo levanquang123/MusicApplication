@@ -18,17 +18,17 @@ import com.example.musicapplication.ui.home.album.detail.DetailAlbumViewModel
 import com.example.musicapplication.ui.home.album.more.MoreAlbumFragment
 import com.example.musicapplication.ui.home.album.more.MoreAlbumViewModel
 
-
 class AlbumHotFragment : Fragment() {
     private lateinit var binding: FragmentAlbumHotBinding
     private lateinit var adapter: AlbumAdapter
     private val albumViewModel: AlbumHotViewModel by activityViewModels()
     private val detailAlbumViewModel: DetailAlbumViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels{
+    private val homeViewModel: HomeViewModel by activityViewModels {
         val application = requireActivity().application as MusicApplication
         HomeViewModel.Factory(application.getSongRepository())
     }
     private val moreAlbumViewModel: MoreAlbumViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,8 +54,12 @@ class AlbumHotFragment : Fragment() {
             }
         })
         binding.rvAlbumHot.adapter = adapter
-        binding.textTitleAlbumHot.setOnClickListener { navigateToMoreAlbum() }
-        binding.btnMoreAlbumHot.setOnClickListener { navigateToMoreAlbum() }
+        binding.textTitleAlbumHot.setOnClickListener {
+            navigateToMoreAlbum()
+        }
+        binding.btnMoreAlbumHot.setOnClickListener {
+            navigateToMoreAlbum()
+        }
     }
 
     private fun observeData() {
@@ -77,9 +81,7 @@ class AlbumHotFragment : Fragment() {
 
     private fun navigateToMoreAlbum() {
         val albums = homeViewModel.albums.value
-        albums?.let { albumList ->
-            moreAlbumViewModel.setAlbums(albumList.sortedBy { -it.size })
-        }
+        moreAlbumViewModel.setAlbums(albums)
         requireActivity().supportFragmentManager
             .beginTransaction()
             .replace(R.id.nav_host_fragment_activity_main, MoreAlbumFragment::class.java, null)

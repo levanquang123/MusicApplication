@@ -21,7 +21,6 @@ class FavoriteFragment : PlayerBaseFragment() {
     private val favoriteViewModel: FavoriteViewModel by activityViewModels()
     private val detailViewModel: DetailViewModel by activityViewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,13 +57,6 @@ class FavoriteFragment : PlayerBaseFragment() {
         }
     }
 
-    private fun observeData() {
-        favoriteViewModel.songs.observe(viewLifecycleOwner) { songs ->
-            adapter.updateSongs(songs)
-            detailViewModel.setSongs(songs)
-        }
-    }
-
     private fun navigateToDetailScreen() {
         val playlistName = FAVORITES.value
         val screenName = getString(R.string.title_favorite)
@@ -75,5 +67,12 @@ class FavoriteFragment : PlayerBaseFragment() {
             .replace(R.id.nav_host_fragment_activity_main, DetailFragment::class.java, null)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun observeData() {
+        favoriteViewModel.songs.observe(viewLifecycleOwner) { songs ->
+            adapter.updateSongs(songs)
+            detailViewModel.setSongs(songs)
+        }
     }
 }

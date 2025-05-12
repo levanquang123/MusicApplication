@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.musicapplication.MusicApplication
 import com.example.musicapplication.databinding.FragmentLibraryBinding
-import com.example.musicapplication.ui.home.HomeFragment
 import com.example.musicapplication.ui.library.favorite.FavoriteViewModel
 import com.example.musicapplication.ui.library.playlist.PlaylistViewModel
 import com.example.musicapplication.ui.library.recent.RecentViewModel
@@ -27,7 +26,6 @@ class LibraryFragment : Fragment() {
             application.getPlaylistRepository()
         )
     }
-
     private val recentSongViewModel: RecentViewModel by activityViewModels()
     private val favoriteViewModel: FavoriteViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels {
@@ -47,8 +45,8 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeData()
-        if(savedInstanceState != null) {
-            val scrollPosition = savedInstanceState.getInt(HomeFragment.Companion.SCROLL_POSITION)
+        if (savedInstanceState != null) {
+            val scrollPosition = savedInstanceState.getInt(SCROLL_POSITION)
             binding.scrollViewLibrary.post {
                 binding.scrollViewLibrary.scrollTo(0, scrollPosition)
             }
@@ -61,7 +59,6 @@ class LibraryFragment : Fragment() {
     }
 
     private fun observeData() {
-
         val sharedViewModel = SharedViewModel.instance
         libraryViewModel.recentSongs.observe(viewLifecycleOwner) { recentSongs ->
             recentSongViewModel.setRecentSongs(recentSongs)
@@ -70,9 +67,9 @@ class LibraryFragment : Fragment() {
         libraryViewModel.favoriteSongs.observe(viewLifecycleOwner) { favoriteSongs ->
             favoriteViewModel.setSongs(favoriteSongs)
             sharedViewModel.setupPlaylist(favoriteSongs, FAVORITES.value)
-
         }
     }
+
     companion object {
         const val SCROLL_POSITION = "com.example.musicapplication.ui.library.SCROLL_POSITION"
     }

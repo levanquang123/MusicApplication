@@ -47,7 +47,7 @@ class PlaylistFragment : Fragment() {
             object : PlaylistAdapter.OnPlaylistClickListener {
                 override fun onPlaylistClick(playlist: Playlist) {
                     SharedViewModel.instance.addPlaylist(playlist)
-                    playlistViewModel.getPlaylistWithSongByPlaylistId(playlist._id)
+                    playlistViewModel.getPlaylistWithSongByPlaylistId(playlist.id)
                     shouldNavigateToDetail = true
                 }
 

@@ -12,7 +12,7 @@ import java.util.Date
 data class Playlist(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "playlist_id")
-    var _id: Int = 0, // Room sẽ tự động tạo ID tăng dần
+    var id: Int = 1001, // ← để Room tự sinh, không dùng _id / setter phức tạp
 
     @ColumnInfo(name = "name")
     var name: String = "",
@@ -21,13 +21,14 @@ data class Playlist(
     var artwork: String? = null,
 
     @ColumnInfo(name = "created_at")
-    var createdAt: Date? = null
+    var createdAt: Date? = Date()
 ) {
-    @Ignore
-    private val _mediaItems: MutableList<MediaItem> = mutableListOf()
-
+    // Bỏ logic autoId thủ công
     @Ignore
     var songs: List<Song> = listOf()
+
+    @Ignore
+    private val _mediaItems: MutableList<MediaItem> = mutableListOf()
 
     val mediaItems: List<MediaItem>
         get() = _mediaItems
@@ -47,11 +48,11 @@ data class Playlist(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Playlist) return false
-        if (_id != other._id) return false
+
+        if (id != other.id) return false
+
         return true
     }
 
-    override fun hashCode(): Int {
-        return _id
-    }
+    override fun hashCode(): Int = id
 }

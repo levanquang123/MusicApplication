@@ -44,7 +44,7 @@ class SharedViewModel private constructor(
 
     fun initPlaylist() {
         for (playlistName in DefaultPlaylistName.entries.toTypedArray()) {
-            val playlist = Playlist(_id = -1, name = playlistName.value)
+            val playlist = Playlist(id = playlistName.ordinal, name = playlistName.value)
             _playlists[playlistName.value] = playlist
         }
     }

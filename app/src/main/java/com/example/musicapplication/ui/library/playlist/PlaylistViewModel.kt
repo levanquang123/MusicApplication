@@ -35,7 +35,7 @@ class PlaylistViewModel(
 
     fun createNewPlaylist(playlistName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val playlist = Playlist(_id = 0, name = playlistName, createdAt = Date())
+            val playlist = Playlist(id = 0, name = playlistName, createdAt = Date())
             playlistRepository.createPlaylist(playlist)
         }
     }
@@ -51,7 +51,7 @@ class PlaylistViewModel(
         if (song != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 val playlistSongCrossRef = PlaylistSongCrossRef()
-                playlistSongCrossRef.playlistId = playlist._id
+                playlistSongCrossRef.playlistId = playlist.id
                 playlistSongCrossRef.songId = song.id
                 val result = playlistRepository.createPlaylistSongCrossRef(playlistSongCrossRef)
                 _addResult.postValue(result != -1L)

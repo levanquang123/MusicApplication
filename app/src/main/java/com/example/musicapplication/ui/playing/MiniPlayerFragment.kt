@@ -159,7 +159,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
                 // TH2: khác playlist, cùng index -> phát bài hát từ đầu
                 val condition1 = it.mediaItemCount > index && it.currentMediaItemIndex != index
                 val condition2 = playlistToPlay != null && it.currentMediaItemIndex == index
-                        && playlistToPlay._id != currentPlaylist?._id
+                        && playlistToPlay.id != currentPlaylist?.id
 
                 if (index > -1 && (condition1 || condition2)) {
                     it.seekTo(index, 0)
@@ -183,7 +183,7 @@ class MiniPlayerFragment : Fragment(), View.OnClickListener {
                 currentPlaylist = playingSong.playlist
             }
             if (playlist.mediaItems.isNotEmpty()
-                && (currentPlaylist == null || currentPlaylist._id != playlist._id)
+                && (currentPlaylist == null || currentPlaylist.id != playlist.id)
             ) {
                 viewModel.setMediaItem(playlist.mediaItems)
             }
